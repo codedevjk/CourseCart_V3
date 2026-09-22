@@ -1,0 +1,5 @@
+.main-content {
+  min-height: calc(100vh - 140px); /* Adjust based on navbar + footer height */
+  display: flex;
+  flex-direction: column;
+}

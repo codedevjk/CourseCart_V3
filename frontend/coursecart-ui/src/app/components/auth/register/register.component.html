@@ -1,0 +1,78 @@
+﻿<div class="auth-page w-100">
+  <div class="auth-container shadow-lg overflow-hidden mx-auto d-flex flex-column">
+    <div class="row g-0 w-100 flex-grow-1 align-items-stretch">
+      
+      <!-- Image Side -->
+      <div class="col-md-5 d-none d-md-block auth-image-panel position-relative order-md-2">
+        <div class="overlay position-absolute w-100 h-100" style="z-index: 1;"></div>
+        <img src="assets/login-learning.png" alt="Learning Graphic" class="position-absolute top-0 start-0 w-100 h-100 object-fit-cover" style="z-index: 0;">
+        <div class="auth-image-text position-absolute text-white p-4 bottom-0 start-0" style="z-index: 2;">
+          <h2 class="display-6 fw-bold mb-2 fs-2">Shape your future.</h2>
+          <p class="lead fs-6 mb-0">Gain access to world-class instructors and interactive courses right at your fingertips.</p>
+        </div>
+      </div>
+
+      <!-- Form Side -->
+      <div class="col-md-7 d-flex flex-column justify-content-center p-4 p-lg-5 bg-white auth-form-panel order-md-1">
+        <div class="text-center mb-4">
+          <h2 class="auth-title fw-bolder mb-1">Create an Account</h2>
+          <p class="auth-subtitle text-muted mb-0">Join CourseCart to start learning today.</p>
+        </div>
+        
+        <div *ngIf="errorMessage" class="alert alert-danger shadow-sm border-0 py-2 mb-3" role="alert">
+          <i class="bi bi-exclamation-circle-fill me-2"></i>{{ errorMessage }}
+        </div>
+        
+        <form (ngSubmit)="onSubmit()" #registerForm="ngForm" class="auth-form w-100">
+          <div class="mb-3 text-start">
+            <label for="name" class="form-label text-muted small fw-bold mb-1">Full Name</label>
+            <input 
+              type="text" 
+              id="name" 
+              name="name" 
+              [(ngModel)]="user.name" 
+              required 
+              class="form-control custom-input"
+              placeholder="Full Name">
+          </div>
+
+          <div class="mb-3 text-start">
+            <label for="username" class="form-label text-muted small fw-bold mb-1">Username</label>
+            <input 
+              type="text" 
+              id="username" 
+              name="username" 
+              [(ngModel)]="user.username" 
+              required 
+              class="form-control custom-input"
+              placeholder="Username">
+          </div>
+          
+          <div class="mb-4 text-start">
+            <label for="password" class="form-label text-muted small fw-bold mb-1">Password</label>
+            <input 
+              type="password" 
+              id="password" 
+              name="password" 
+              [(ngModel)]="user.password" 
+              required 
+              class="form-control custom-input"
+              placeholder="Password">
+          </div>
+          
+          <button type="submit" class="btn btn-primary w-100 py-2 auth-submit-btn fw-bold shadow-sm" [disabled]="isLoading || !registerForm.form.valid">
+            <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+            {{ isLoading ? 'Creating Account...' : 'Sign Up' }}
+          </button>
+        </form>
+        
+        <div class="text-center mt-4 text-muted">
+          Already have an account? <a routerLink="/login" class="auth-link fw-bold text-decoration-none">Log in here</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+

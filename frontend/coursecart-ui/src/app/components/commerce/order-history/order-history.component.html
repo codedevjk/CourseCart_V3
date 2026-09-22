@@ -1,0 +1,78 @@
+﻿<div class="order-history-page">
+  <div class="hero-section">
+    <div class="container hero-container">
+      <div class="hero-content">
+        <h1 class="hero-title">Order History</h1>
+        <p class="hero-subtitle">Review your past purchases and course enrollments.</p>
+      </div>
+      <div class="hero-image">
+        <img src="assets/collaborative-learning.png" alt="Order History">
+      </div>
+    </div>
+  </div>
+
+  <div class="container dashboard-content">
+    
+    <!-- Loading State -->
+    <div *ngIf="loading" class="loading-state">
+      <app-loading-spinner></app-loading-spinner>
+    </div>
+
+    <!-- Error State -->
+    <div *ngIf="!loading && error">
+      <app-error-state [message]="error"></app-error-state>
+    </div>
+
+    <!-- Empty State -->
+    <div *ngIf="!loading && !error && orders.length === 0">
+      <app-empty-state
+        message="No Orders Yet"
+        submessage="You haven't purchased any courses yet. Explore our catalog to find something interesting!"
+        imageUrl="assets/empty-learning-state.png">
+        <a routerLink="/courses" class="btn btn-primary mt-3">Browse Courses</a>
+      </app-empty-state>
+    </div>
+
+    <!-- Orders List -->
+    <div *ngIf="!loading && !error && orders.length > 0">
+      <div class="orders-list">
+        
+        <div class="order-card" *ngFor="let item of orders; let i = index">
+          
+          <div class="order-card-left" [ngClass]="getCardColor(i)">
+            <div class="course-squircle">
+              {{ item.course ? getCategoryInitials(item.course.category?.name || 'Course Category Unavailable') : '??' }}
+            </div>
+          </div>
+          
+          <div class="order-card-right">
+            <div class="order-details-main">
+              <span class="category-text">{{ item.course?.category?.name || 'Course Category Unavailable' }}</span>
+              <h3 class="course-title">{{ item.course ? item.course.title : 'Course Unavailable' }}</h3>
+            </div>
+            
+            <div class="order-meta-info">
+              
+              <div class="meta-item">
+                <span class="meta-label">Date</span>
+                <span class="meta-value">{{ item.order.orderDate | date:'mediumDate' }}</span>
+              </div>
+              <div class="meta-item"><span class="meta-label">Payment Mode</span><span class="meta-value" style="text-transform: capitalize;">{{ item.order.paymentMethod || 'Credit Card' }}</span></div><div class="meta-item text-right"><span class="meta-label">Amount Paid</span><span class="meta-value price-text">{{ item.order.amountPaid === 0 ? 'Free' : (item.order.amountPaid | currency:'INR') }}</span></div>
+            </div>
+          </div>
+          
+        </div>
+        
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,70 @@
+<div class="hero-section">
+  <div class="container hero-container">
+    <div class="hero-content">
+      
+      <h1 class="hero-title">Short, readable courses you own forever.</h1>
+      <p class="hero-subtitle">Buy one course at a time, keep permanent access, and tick off lessons as you go. No subscriptions, no video queues.</p>
+    </div>
+    <div class="hero-image">
+      <img src="assets/coursecart-hero.png" alt="Course Catalog Hero" />
+    </div>
+  </div>
+</div>
+
+<div class="container discovery-content">
+  
+  <div *ngIf="isLoading" class="loading-state">
+    <app-loading-spinner></app-loading-spinner>
+  </div>
+
+  <div *ngIf="!isLoading && errorMessage">
+    <app-error-state [message]="errorMessage"></app-error-state>
+  </div>
+
+  <div class="discovery-layout" *ngIf="!isLoading && !errorMessage">
+    <!-- Horizontal Filters Bar -->
+    <div class="discovery-filters-bar">
+      <div class="search-box">
+        <input 
+          type="text" 
+          [(ngModel)]="searchQuery" 
+          (ngModelChange)="applyFilters()" 
+          placeholder="Search course titles..." 
+          class="form-control">
+      </div>
+
+      <div class="category-filters">
+        <select 
+          class="form-select category-dropdown" 
+          [(ngModel)]="selectedCategoryId" 
+          (ngModelChange)="applyFilters()">
+          <option [ngValue]="null">All categories</option>
+          <option *ngFor="let cat of categories" [ngValue]="cat.id">
+            {{ cat.name }}
+          </option>
+        </select>
+        <span class="courses-count">{{ filteredCourses.length }} courses</span>
+      </div>
+    </div>
+
+    <!-- Course Grid -->
+    <main class="discovery-main">
+      
+      <div *ngIf="filteredCourses.length > 0" class="course-grid">
+        <div class="course-col" *ngFor="let course of filteredCourses">
+          <app-course-card [course]="course"></app-course-card>
+        </div>
+      </div>
+
+      <div *ngIf="filteredCourses.length === 0">
+        <app-empty-state 
+          message="No courses found" 
+          submessage="Try adjusting your search or category filters."
+          imageUrl="assets/no-courses.png">
+        </app-empty-state>
+      </div>
+
+    </main>
+
+  </div>
+</div>

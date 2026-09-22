@@ -1,0 +1,85 @@
+﻿<div *ngIf="isLoading" class="container" style="padding: 4rem 0;">
+  <app-loading-spinner></app-loading-spinner>
+</div>
+
+<div *ngIf="!isLoading && errorMessage && !course" class="container" style="padding: 4rem 0;">
+  <app-error-state [message]="errorMessage"></app-error-state>
+</div>
+
+<div *ngIf="!isLoading && course" class="course-detail-page">
+  <div class="container detail-container">
+    
+    <!-- LEFT COLUMN: Content -->
+    <div class="content-column">
+      
+      <!-- Header Area -->
+      <div class="header-area">
+        <a routerLink="/courses" class="back-nav-link">
+          <i class="bi bi-arrow-left me-2"></i> Back to Catalog
+        </a>
+        <div class="category-badge">{{ course.category?.name || 'Uncategorized' | uppercase }}</div>
+        <h1 class="course-title">{{ course.title }}</h1>
+        <p class="course-description">{{ course.description }}</p>
+      </div>
+
+      <!-- Syllabus Area -->
+      <div class="syllabus-area">
+        <h2 class="syllabus-title">Syllabus</h2>
+        
+        <div class="lesson-list">
+          <div class="lesson-card" *ngFor="let lesson of course.lessons">
+            <span class="lesson-number">{{ (lesson.displayOrder < 10 ? '0' : '') + lesson.displayOrder }}</span>
+            <span class="lesson-name">{{ lesson.title }}</span>
+          </div>
+          
+          <div class="lesson-card" *ngIf="course.lessons.length === 0">
+            <span class="lesson-name text-muted">No lessons available yet.</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- RIGHT COLUMN: Floating Card -->
+    <div class="sidebar-column">
+      <div class="enroll-card">
+        
+        <div class="price-display">{{ course.price === 0 ? 'Free' : (course.price | currency:'INR') }}</div>
+        
+        <div class="card-meta">
+          {{ course.lessons.length }} lesson{{ course.lessons.length !== 1 ? 's' : '' }} &middot; permanent access after purchase
+        </div>
+        
+        <!-- Logged-in User (Not Admin) - NOT Enrolled -->
+        <button *ngIf="isLoggedIn && !isAdmin && !isEnrolled" (click)="onEnrollClick()" class="btn btn-enroll w-100">
+          Buy now
+        </button>
+
+        <!-- Logged-in User (Not Admin) - ENROLLED -->
+        <div *ngIf="isLoggedIn && !isAdmin && isEnrolled" class="enrolled-state">
+          <div class="already-enrolled-label">Already enrolled</div>
+          <button (click)="onEnrollClick()" class="btn btn-enroll w-100">
+            Continue learning
+          </button>
+        </div>
+
+        <!-- Guest -->
+        <button *ngIf="!isLoggedIn" (click)="onEnrollClick()" class="btn btn-enroll w-100">
+          Log in to buy
+        </button>
+        
+        <!-- Admin Warning -->
+        <p *ngIf="isAdmin" class="admin-warning mt-3">
+          Admin accounts review the catalog but cannot purchase courses.
+        </p>
+
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+
+
+
