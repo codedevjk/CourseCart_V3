@@ -1,20 +1,12 @@
 package com.coursecart.user.dto;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class CountResponse {
-    
     private long totalUsers;
-    
-    public CountResponse() {}
-    
-    public CountResponse(long totalUsers) {
-        this.totalUsers = totalUsers;
-    }
-    
-    public long getTotalUsers() {
-        return totalUsers;
-    }
-    
-    public void setTotalUsers(long totalUsers) {
-        this.totalUsers = totalUsers;
-    }
 }

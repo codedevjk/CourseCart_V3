@@ -1,47 +1,21 @@
 package com.coursecart.commerce.dto;
 
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
 
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class CheckoutRequest {
-
     @NotNull(message = "User ID is required")
     private Long userId;
 
     @NotNull(message = "Course ID is required")
     private Long courseId;
 
+    @NotBlank(message = "Payment method is required")
     private String paymentMethod;
-
-    public CheckoutRequest() {
-    }
-
-    public CheckoutRequest(Long userId, Long courseId, String paymentMethod) {
-        this.userId = userId;
-        this.courseId = courseId;
-        this.paymentMethod = paymentMethod;
-    }
-
-    public Long getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Long userId) {
-        this.userId = userId;
-    }
-
-    public Long getCourseId() {
-        return courseId;
-    }
-
-    public void setCourseId(Long courseId) {
-        this.courseId = courseId;
-    }
-
-    public String getPaymentMethod() {
-        return paymentMethod;
-    }
-
-    public void setPaymentMethod(String paymentMethod) {
-        this.paymentMethod = paymentMethod;
-    }
 }

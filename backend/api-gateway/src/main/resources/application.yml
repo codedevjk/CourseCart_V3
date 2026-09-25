@@ -30,7 +30,6 @@ spring:
           predicates:
             - Path=/api/users/**
         
-        # Prepared routes for future services (will not work until services are built)
         - id: catalog-service-route
           uri: lb://catalog-service
           predicates:

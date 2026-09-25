@@ -262,3 +262,10 @@
 }
 
 
+
+.category-card-main { margin-bottom: 0; }
+.confirm-modal, .alert-modal { max-width: 400px; text-align: center; }
+.confirm-title, .alert-title { margin-bottom: 1rem; }
+.confirm-message, .alert-message { color: var(--text-light); margin-bottom: 2rem; }
+.confirm-actions { gap: 1rem; }
+

@@ -1,4 +1,4 @@
-﻿.navbar {
+.navbar {
   background-color: var(--bg-color); /* Beige */
   border-bottom: 1px solid var(--border-color);
   min-height: clamp(60px, 5vw, 80px);
@@ -110,6 +110,13 @@
   font-weight: 500;
   color: var(--text-light);
   font-size: 1rem;
+  text-decoration: none;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.user-greeting:hover {
+  color: var(--text-dark);
 }
 
 .nav-link {

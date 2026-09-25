@@ -1,8 +1,8 @@
-﻿<div *ngIf="isLoading" class="container" style="padding: 4rem 0;">
+<div *ngIf="isLoading" class="container state-container">
   <app-loading-spinner></app-loading-spinner>
 </div>
 
-<div *ngIf="!isLoading && errorMessage" class="container" style="padding: 4rem 0;">
+<div *ngIf="!isLoading && errorMessage" class="container state-container">
   <app-error-state [message]="errorMessage"></app-error-state>
 </div>
 
@@ -42,7 +42,7 @@
         
                 <hr class="lesson-divider">
         
-        <div class="alert alert-danger" *ngIf="actionError" style="margin-bottom: 1rem;">
+        <div class="alert alert-danger action-error" *ngIf="actionError">
           {{ actionError }}
         </div>
         
@@ -70,12 +70,12 @@
 
 <!-- Course Unavailable Modal -->
 <div class="modal-overlay" *ngIf="!isCourseAvailable">
-  <div class="admin-form-section modal-content" style="max-width: 450px; text-align: center; padding: 3rem 2rem;">
-    <div style="font-size: 3rem; color: #dc3545; margin-bottom: 1rem;">
+  <div class="admin-form-section modal-content unavailable-modal">
+    <div class="unavailable-icon">
       <i class="bi bi-exclamation-triangle-fill"></i>
     </div>
-    <h3 class="card-title text-danger" style="margin-bottom: 1rem;">Course Unavailable</h3>
-    <p style="color: var(--text-light); margin-bottom: 2rem;">
+    <h3 class="card-title text-danger unavailable-title">Course Unavailable</h3>
+    <p class="unavailable-desc">
       This course is no longer available because its category has been removed. Please contact support if you believe this is an error.
     </p>
     <div class="form-actions justify-content-center mt-4">

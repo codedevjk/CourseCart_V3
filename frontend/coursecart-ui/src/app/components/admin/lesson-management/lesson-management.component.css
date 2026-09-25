@@ -249,3 +249,10 @@
   overflow-y: auto;
 }
 
+
+.course-title-highlight { font-family: var(--font-sans); }
+.confirm-modal { max-width: 400px; text-align: center; }
+.confirm-title { margin-bottom: 1rem; }
+.confirm-message { color: var(--text-light); margin-bottom: 2rem; }
+.confirm-actions { gap: 1rem; }
+

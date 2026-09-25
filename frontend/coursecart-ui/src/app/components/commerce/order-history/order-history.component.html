@@ -1,4 +1,4 @@
-﻿<div class="order-history-page">
+<div class="order-history-page">
   <div class="hero-section">
     <div class="container hero-container">
       <div class="hero-content">
@@ -57,7 +57,7 @@
                 <span class="meta-label">Date</span>
                 <span class="meta-value">{{ item.order.orderDate | date:'mediumDate' }}</span>
               </div>
-              <div class="meta-item"><span class="meta-label">Payment Mode</span><span class="meta-value" style="text-transform: capitalize;">{{ item.order.paymentMethod || 'Credit Card' }}</span></div><div class="meta-item text-right"><span class="meta-label">Amount Paid</span><span class="meta-value price-text">{{ item.order.amountPaid === 0 ? 'Free' : (item.order.amountPaid | currency:'INR') }}</span></div>
+              <div class="meta-item"><span class="meta-label">Payment Mode</span><span class="meta-value text-capitalize">{{ item.order.paymentMethod || 'Credit Card' }}</span></div><div class="meta-item text-right"><span class="meta-label">Amount Paid</span><span class="meta-value price-text">{{ item.order.amountPaid === 0 ? 'Free' : (item.order.amountPaid | currency:'INR') }}</span></div>
             </div>
           </div>
           

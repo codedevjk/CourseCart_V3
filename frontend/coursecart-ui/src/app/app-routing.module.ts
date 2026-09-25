@@ -1,4 +1,4 @@
-﻿import { NgModule } from '@angular/core';
+import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
 import { HomeComponent } from './components/home/home.component';
@@ -18,6 +18,7 @@ import { CategoryManagementComponent } from './components/admin/category-managem
 import { CourseManagementComponent } from './components/admin/course-management/course-management.component';
 import { LessonManagementComponent } from './components/admin/lesson-management/lesson-management.component';
 import { OrderHistoryComponent } from './components/commerce/order-history/order-history.component';
+import { ProfileComponent } from './components/user/profile/profile.component';
 
 const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -30,6 +31,7 @@ const routes: Routes = [
   { path: 'learning', component: LearningDashboardComponent, canActivate: [AuthGuard] },
   { path: 'learning/:courseId', component: CourseLearningComponent, canActivate: [AuthGuard] },
   { path: 'orders', component: OrderHistoryComponent, canActivate: [AuthGuard] },
+  { path: 'profile', component: ProfileComponent, canActivate: [AuthGuard] },
   
   // Admin Routes
   { 

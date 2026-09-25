@@ -6,6 +6,7 @@ import com.coursecart.enrollment.entity.LessonProgress;
 import com.coursecart.enrollment.exception.ResourceNotFoundException;
 import com.coursecart.enrollment.repository.EnrollmentRepository;
 import com.coursecart.enrollment.repository.LessonProgressRepository;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,10 +20,12 @@ public class EnrollmentServiceImpl implements EnrollmentService {
 
     private final EnrollmentRepository enrollmentRepository;
     private final LessonProgressRepository lessonProgressRepository;
+    private final ModelMapper modelMapper;
 
-    public EnrollmentServiceImpl(EnrollmentRepository enrollmentRepository, LessonProgressRepository lessonProgressRepository) {
+    public EnrollmentServiceImpl(EnrollmentRepository enrollmentRepository, LessonProgressRepository lessonProgressRepository, ModelMapper modelMapper) {
         this.enrollmentRepository = enrollmentRepository;
         this.lessonProgressRepository = lessonProgressRepository;
+        this.modelMapper = modelMapper;
     }
 
     @Override
@@ -34,7 +37,6 @@ public class EnrollmentServiceImpl implements EnrollmentService {
 
     @Override
     public List<Long> getCompletedLessonIds(Long enrollmentId) {
-        // Verify enrollment exists first
         if (!enrollmentRepository.existsById(enrollmentId)) {
             throw new ResourceNotFoundException("Enrollment not found");
         }
@@ -57,9 +59,10 @@ public class EnrollmentServiceImpl implements EnrollmentService {
             progress.setIsCompleted(completed);
             lessonProgressRepository.save(progress);
         } else {
-            // Only create if we are setting it to completed
             if (completed) {
-                LessonProgress progress = new LessonProgress(enrollment, lessonId);
+                LessonProgress progress = new LessonProgress();
+                progress.setEnrollment(enrollment);
+                progress.setLessonId(lessonId);
                 progress.setIsCompleted(true);
                 lessonProgressRepository.save(progress);
             }
@@ -83,17 +86,15 @@ public class EnrollmentServiceImpl implements EnrollmentService {
             throw new IllegalArgumentException("User is already enrolled in this course");
         }
 
-        Enrollment enrollment = new Enrollment(userId, courseId);
+        Enrollment enrollment = new Enrollment();
+        enrollment.setUserId(userId);
+        enrollment.setCourseId(courseId);
+        
         Enrollment saved = enrollmentRepository.save(enrollment);
         return mapToDTO(saved);
     }
 
     private EnrollmentDTO mapToDTO(Enrollment enrollment) {
-        return new EnrollmentDTO(
-                enrollment.getId(),
-                enrollment.getUserId(),
-                enrollment.getCourseId(),
-                enrollment.getEnrolledAt()
-        );
+        return modelMapper.map(enrollment, EnrollmentDTO.class);
     }
 }

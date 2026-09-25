@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import org.modelmapper.ModelMapper;
 
 @Service
 public class CatalogServiceImpl implements CatalogService {
@@ -23,11 +24,13 @@ public class CatalogServiceImpl implements CatalogService {
     private final CategoryRepository categoryRepository;
     private final CourseRepository courseRepository;
     private final LessonRepository lessonRepository;
+    private final ModelMapper modelMapper;
 
-    public CatalogServiceImpl(CategoryRepository categoryRepository, CourseRepository courseRepository, LessonRepository lessonRepository) {
+    public CatalogServiceImpl(CategoryRepository categoryRepository, CourseRepository courseRepository, LessonRepository lessonRepository, ModelMapper modelMapper) {
         this.categoryRepository = categoryRepository;
         this.courseRepository = courseRepository;
         this.lessonRepository = lessonRepository;
+        this.modelMapper = modelMapper;
     }
 
     // --- CATEGORIES ---
@@ -45,7 +48,8 @@ public class CatalogServiceImpl implements CatalogService {
         if (categoryRepository.findByName(request.getName()).isPresent()) {
             throw new IllegalArgumentException("Category name already exists");
         }
-        Category category = new Category(request.getName());
+        Category category = new Category();
+        category.setName(request.getName());
         Category saved = categoryRepository.save(category);
         return mapToCategoryDTO(saved);
     }
@@ -121,9 +125,17 @@ public class CatalogServiceImpl implements CatalogService {
         Category category = categoryRepository.findById(request.getCategoryId())
                 .orElseThrow(() -> new ResourceNotFoundException("Category not found"));
 
-        Course course = new Course(category, request.getTitle(), request.getDescription(), request.getPrice(), CourseStatus.DRAFT);
+        Course course = new Course();
+        course.setCategory(category);
+        course.setTitle(request.getTitle());
+        course.setDescription(request.getDescription());
+        course.setPrice(request.getPrice());
+        course.setStatus(CourseStatus.DRAFT);
         course.setOriginalPrice(request.getOriginalPrice());
         course.setInstructorName(request.getInstructorName());
+        course.setRatingCount(0);
+        course.setBestseller(false);
+        course.setLessonCount(0);
         Course saved = courseRepository.save(course);
         return mapToCourseDTO(saved);
     }
@@ -197,7 +209,11 @@ public class CatalogServiceImpl implements CatalogService {
         Course course = courseRepository.findById(courseId)
                 .orElseThrow(() -> new ResourceNotFoundException("Course not found"));
 
-        Lesson lesson = new Lesson(course, request.getTitle(), request.getContent(), request.getDisplayOrder());
+        Lesson lesson = new Lesson();
+        lesson.setCourse(course);
+        lesson.setTitle(request.getTitle());
+        lesson.setContent(request.getContent());
+        lesson.setDisplayOrder(request.getDisplayOrder());
         Lesson saved = lessonRepository.save(lesson);
         return mapToLessonDTO(saved);
     }
@@ -245,55 +261,25 @@ public class CatalogServiceImpl implements CatalogService {
         if (category == null) {
             return null;
         }
-        return new CategoryDTO(category.getId(), category.getName());
+        return modelMapper.map(category, CategoryDTO.class);
     }
 
     private CourseDTO mapToCourseDTO(Course course) {
-        CourseDTO dto = new CourseDTO(
-                course.getId(),
-                course.getTitle(),
-                course.getDescription(),
-                course.getPrice(),
-                course.getStatus(),
-                mapToCategoryDTO(course.getCategory()),
-                course.getOriginalPrice(),
-                course.getInstructorName(),
-                course.getRating(),
-                course.getRatingCount(),
-                course.getBestseller(),
-                course.getLessonCount()
-        );
-        dto.setImageUrl(course.getImageUrl());
-        return dto;
+        return modelMapper.map(course, CourseDTO.class);
     }
 
     private CourseDetailDTO mapToCourseDetailDTO(Course course) {
-        CourseDetailDTO dto = new CourseDetailDTO();
-        dto.setId(course.getId());
-        dto.setTitle(course.getTitle());
-        dto.setDescription(course.getDescription());
-        dto.setPrice(course.getPrice());
-        dto.setStatus(course.getStatus());
-        dto.setImageUrl(course.getImageUrl());
-        dto.setCategory(mapToCategoryDTO(course.getCategory()));
-        
+        CourseDetailDTO dto = modelMapper.map(course, CourseDetailDTO.class);
         List<LessonDTO> lessons = lessonRepository.findByCourseIdOrderByDisplayOrderAsc(course.getId())
                 .stream()
                 .map(this::mapToLessonDTO)
                 .collect(Collectors.toList());
         dto.setLessons(lessons);
-        
         return dto;
     }
 
     private LessonDTO mapToLessonDTO(Lesson lesson) {
-        return new LessonDTO(
-                lesson.getId(),
-                lesson.getCourse().getId(),
-                lesson.getTitle(),
-                lesson.getContent(),
-                lesson.getDisplayOrder()
-        );
+        return modelMapper.map(lesson, LessonDTO.class);
     }
 }
 

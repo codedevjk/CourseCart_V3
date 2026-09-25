@@ -18,10 +18,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.modelmapper.ModelMapper;
 
 import java.math.BigDecimal;
-import java.sql.Timestamp;
-import java.time.Instant;
 import java.util.Collections;
 import java.util.List;
 
@@ -41,6 +40,9 @@ public class CommerceServiceTest {
     @Mock
     private EnrollmentServiceClient enrollmentServiceClient;
 
+    @Mock
+    private ModelMapper modelMapper;
+
     @InjectMocks
     private CommerceServiceImpl commerceService;
 
@@ -49,17 +51,26 @@ public class CommerceServiceTest {
 
     @BeforeEach
     void setUp() {
-        activeCourse = new CourseDTO(10L, "Java 101", new BigDecimal("19.99"), "ACTIVE");
+        activeCourse = new CourseDTO();
+        activeCourse.setId(10L);
+        activeCourse.setTitle("Java 101");
+        activeCourse.setPrice(new BigDecimal("19.99"));
+        activeCourse.setStatus("ACTIVE");
 
-        savedOrder = new Order(1L, 10L, new BigDecimal("19.99"), "Credit Card");
+        savedOrder = new Order();
         savedOrder.setId(50L);
+        savedOrder.setUserId(1L);
+        savedOrder.setCourseId(10L);
+        savedOrder.setAmountPaid(new BigDecimal("19.99"));
+        savedOrder.setPaymentMethod("Credit Card");
     }
-
-    // --- processCheckout ---
 
     @Test
     void testProcessCheckout_Success_ActiveCourse_NotEnrolled_ValidPayment() {
-        CheckoutRequest request = new CheckoutRequest(1L, 10L, "CARD");
+        CheckoutRequest request = new CheckoutRequest();
+        request.setUserId(1L);
+        request.setCourseId(10L);
+        request.setPaymentMethod("CARD");
 
         when(catalogServiceClient.getCourseById(10L)).thenReturn(activeCourse);
         when(enrollmentServiceClient.checkEnrollment(1L, 10L)).thenReturn(false);
@@ -77,8 +88,16 @@ public class CommerceServiceTest {
 
     @Test
     void testProcessCheckout_InactiveCourse_ThrowsBadRequestException() {
-        CheckoutRequest request = new CheckoutRequest(1L, 10L, "CARD");
-        CourseDTO inactiveCourse = new CourseDTO(10L, "Java 101", new BigDecimal("19.99"), "INACTIVE");
+        CheckoutRequest request = new CheckoutRequest();
+        request.setUserId(1L);
+        request.setCourseId(10L);
+        request.setPaymentMethod("CARD");
+        
+        CourseDTO inactiveCourse = new CourseDTO();
+        inactiveCourse.setId(10L);
+        inactiveCourse.setTitle("Java 101");
+        inactiveCourse.setPrice(new BigDecimal("19.99"));
+        inactiveCourse.setStatus("INACTIVE");
 
         when(catalogServiceClient.getCourseById(10L)).thenReturn(inactiveCourse);
 
@@ -90,8 +109,16 @@ public class CommerceServiceTest {
 
     @Test
     void testProcessCheckout_DraftCourse_ThrowsBadRequestException() {
-        CheckoutRequest request = new CheckoutRequest(1L, 10L, "UPI");
-        CourseDTO draftCourse = new CourseDTO(10L, "Java 101", new BigDecimal("19.99"), "DRAFT");
+        CheckoutRequest request = new CheckoutRequest();
+        request.setUserId(1L);
+        request.setCourseId(10L);
+        request.setPaymentMethod("UPI");
+        
+        CourseDTO draftCourse = new CourseDTO();
+        draftCourse.setId(10L);
+        draftCourse.setTitle("Java 101");
+        draftCourse.setPrice(new BigDecimal("19.99"));
+        draftCourse.setStatus("DRAFT");
 
         when(catalogServiceClient.getCourseById(10L)).thenReturn(draftCourse);
 
@@ -103,7 +130,10 @@ public class CommerceServiceTest {
 
     @Test
     void testProcessCheckout_AlreadyEnrolled_ThrowsConflictException() {
-        CheckoutRequest request = new CheckoutRequest(1L, 10L, "CARD");
+        CheckoutRequest request = new CheckoutRequest();
+        request.setUserId(1L);
+        request.setCourseId(10L);
+        request.setPaymentMethod("CARD");
 
         when(catalogServiceClient.getCourseById(10L)).thenReturn(activeCourse);
         when(enrollmentServiceClient.checkEnrollment(1L, 10L)).thenReturn(true);
@@ -116,8 +146,10 @@ public class CommerceServiceTest {
 
     @Test
     void testProcessCheckout_NullPaymentMethod_ThrowsBadRequestException() {
-        // The only mock payment "failure" path: null paymentMethod → BadRequestException before any DB write
-        CheckoutRequest request = new CheckoutRequest(1L, 10L, null);
+        CheckoutRequest request = new CheckoutRequest();
+        request.setUserId(1L);
+        request.setCourseId(10L);
+        request.setPaymentMethod(null);
 
         when(catalogServiceClient.getCourseById(10L)).thenReturn(activeCourse);
         when(enrollmentServiceClient.checkEnrollment(1L, 10L)).thenReturn(false);
@@ -130,8 +162,10 @@ public class CommerceServiceTest {
 
     @Test
     void testProcessCheckout_BlankPaymentMethod_ThrowsBadRequestException() {
-        // Blank paymentMethod is also rejected before any DB write
-        CheckoutRequest request = new CheckoutRequest(1L, 10L, "   ");
+        CheckoutRequest request = new CheckoutRequest();
+        request.setUserId(1L);
+        request.setCourseId(10L);
+        request.setPaymentMethod("   ");
 
         when(catalogServiceClient.getCourseById(10L)).thenReturn(activeCourse);
         when(enrollmentServiceClient.checkEnrollment(1L, 10L)).thenReturn(false);
@@ -142,13 +176,21 @@ public class CommerceServiceTest {
         verify(enrollmentServiceClient, never()).createEnrollment(any());
     }
 
-    // --- getOrdersByUserId ---
-
     @Test
     void testGetOrdersByUserId_ReturnsMappedOrderDTOs() {
-        Order order = new Order(1L, 10L, new BigDecimal("19.99"), "Credit Card");
+        Order order = new Order();
         order.setId(50L);
+        order.setUserId(1L);
+        order.setCourseId(10L);
+        order.setAmountPaid(new BigDecimal("19.99"));
+        order.setPaymentMethod("Credit Card");
+        
         when(orderRepository.findByUserId(1L)).thenReturn(Collections.singletonList(order));
+        
+        OrderDTO dto = new OrderDTO();
+        dto.setId(50L);
+        dto.setAmountPaid(new BigDecimal("19.99"));
+        when(modelMapper.map(any(Order.class), eq(OrderDTO.class))).thenReturn(dto);
 
         List<OrderDTO> result = commerceService.getOrdersByUserId(1L);
 
@@ -156,8 +198,6 @@ public class CommerceServiceTest {
         assertEquals(50L, result.get(0).getId());
         assertEquals(new BigDecimal("19.99"), result.get(0).getAmountPaid());
     }
-
-    // --- calculateTotalRevenue ---
 
     @Test
     void testCalculateTotalRevenue_ReturnsSum() {
@@ -170,7 +210,6 @@ public class CommerceServiceTest {
 
     @Test
     void testCalculateTotalRevenue_NoOrders_ReturnsZero() {
-        // Repository returns null when no orders exist → service returns BigDecimal.ZERO
         when(orderRepository.calculateTotalRevenue()).thenReturn(null);
 
         BigDecimal revenue = commerceService.calculateTotalRevenue();
@@ -178,5 +217,3 @@ public class CommerceServiceTest {
         assertEquals(BigDecimal.ZERO, revenue);
     }
 }
-
-

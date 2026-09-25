@@ -1,0 +1,51 @@
+<div class="profile-page">
+  <div class="profile-container">
+
+    <!-- Page Header -->
+    <div class="page-header text-center">
+      <h1 class="page-title">Your profile</h1>
+    </div>
+
+    <!-- Loading State -->
+    <app-loading-spinner *ngIf="isLoading"></app-loading-spinner>
+
+    <!-- Error State -->
+    <app-error-state
+      *ngIf="!isLoading && errorMessage"
+      [message]="errorMessage">
+    </app-error-state>
+
+    <!-- Profile Card -->
+    <div class="profile-card" *ngIf="!isLoading && !errorMessage && user">
+      <div class="profile-grid">
+        
+        <div class="info-group">
+          <label class="info-label">Name</label>
+          <div class="info-value">{{ user.name }}</div>
+        </div>
+
+        <div class="info-group">
+          <label class="info-label">Username</label>
+          <div class="info-value">{{ user.username }}</div>
+        </div>
+
+        <div class="info-group">
+          <label class="info-label">Role</label>
+          <div class="info-value">{{ user.role }}</div>
+        </div>
+
+        <div class="info-group">
+          <label class="info-label">Member since</label>
+          <div class="info-value">Sep 25, 2026</div>
+        </div>
+
+        <div class="info-group" *ngIf="user.role === 'USER'">
+          <label class="info-label">Courses owned</label>
+          <div class="info-value">{{ coursesOwned }}</div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</div>

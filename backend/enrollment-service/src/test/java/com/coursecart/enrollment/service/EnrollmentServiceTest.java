@@ -12,6 +12,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.modelmapper.ModelMapper;
 
 import java.util.Collections;
 import java.util.List;
@@ -31,6 +32,9 @@ public class EnrollmentServiceTest {
     @Mock
     private LessonProgressRepository lessonProgressRepository;
 
+    @Mock
+    private ModelMapper modelMapper;
+
     @InjectMocks
     private EnrollmentServiceImpl enrollmentService;
 
@@ -39,27 +43,31 @@ public class EnrollmentServiceTest {
 
     @BeforeEach
     void setUp() {
-        enrollment = new Enrollment(1L, 5L);
+        enrollment = new Enrollment();
         enrollment.setId(100L);
+        enrollment.setUserId(1L);
+        enrollment.setCourseId(5L);
 
-        lessonProgress = new LessonProgress(enrollment, 101L);
+        lessonProgress = new LessonProgress();
+        lessonProgress.setEnrollment(enrollment);
+        lessonProgress.setLessonId(101L);
         lessonProgress.setId(200L);
         lessonProgress.setIsCompleted(true);
     }
 
-    // --- getEnrollmentsByUserId ---
-
     @Test
     void testGetEnrollmentsByUserId() {
         when(enrollmentRepository.findByUserId(1L)).thenReturn(Collections.singletonList(enrollment));
+        
+        EnrollmentDTO dto = new EnrollmentDTO();
+        dto.setCourseId(5L);
+        when(modelMapper.map(any(Enrollment.class), eq(EnrollmentDTO.class))).thenReturn(dto);
 
         List<EnrollmentDTO> result = enrollmentService.getEnrollmentsByUserId(1L);
 
         assertEquals(1, result.size());
         assertEquals(5L, result.get(0).getCourseId());
     }
-
-    // --- getCompletedLessonIds ---
 
     @Test
     void testGetCompletedLessonIds() {
@@ -79,12 +87,14 @@ public class EnrollmentServiceTest {
         assertThrows(ResourceNotFoundException.class, () -> enrollmentService.getCompletedLessonIds(999L));
     }
 
-    // --- createEnrollment ---
-
     @Test
     void testCreateEnrollment_Success() {
         when(enrollmentRepository.findByUserIdAndCourseId(1L, 5L)).thenReturn(Optional.empty());
         when(enrollmentRepository.save(any(Enrollment.class))).thenReturn(enrollment);
+        
+        EnrollmentDTO dto = new EnrollmentDTO();
+        dto.setId(100L);
+        when(modelMapper.map(any(Enrollment.class), eq(EnrollmentDTO.class))).thenReturn(dto);
 
         EnrollmentDTO result = enrollmentService.createEnrollment(1L, 5L);
 
@@ -101,8 +111,6 @@ public class EnrollmentServiceTest {
         verify(enrollmentRepository, never()).save(any());
     }
 
-    // --- markLessonComplete: idempotent mark-as-complete ---
-
     @Test
     void testMarkLessonComplete_NewProgress() {
         when(enrollmentRepository.findById(100L)).thenReturn(Optional.of(enrollment));
@@ -116,7 +124,6 @@ public class EnrollmentServiceTest {
 
     @Test
     void testMarkLessonComplete_NoExistingRow_CompletedFalse_NoInsert() {
-        // Calling with completed=false when no row exists is a no-op — no row is created
         when(enrollmentRepository.findById(100L)).thenReturn(Optional.of(enrollment));
         when(lessonProgressRepository.findByEnrollmentIdAndLessonId(100L, 101L)).thenReturn(Optional.empty());
 
@@ -138,7 +145,6 @@ public class EnrollmentServiceTest {
 
     @Test
     void testMarkLessonComplete_RepeatedComplete_IdempotentUpdateOfExistingRow() {
-        // Lesson is already completed — calling again with completed=true updates the same row, not a new one
         lessonProgress.setIsCompleted(true);
         when(enrollmentRepository.findById(100L)).thenReturn(Optional.of(enrollment));
         when(lessonProgressRepository.findByEnrollmentIdAndLessonId(100L, 101L)).thenReturn(Optional.of(lessonProgress));
@@ -157,8 +163,6 @@ public class EnrollmentServiceTest {
                 () -> enrollmentService.markLessonComplete(999L, 101L, true));
     }
 
-    // --- countTotalEnrollments ---
-
     @Test
     void testCountTotalEnrollments_ReturnsTotalEnrollmentsKey() {
         when(enrollmentRepository.count()).thenReturn(37L);
@@ -169,8 +173,6 @@ public class EnrollmentServiceTest {
         assertTrue(result.containsKey("totalEnrollments"));
         assertEquals(37L, result.get("totalEnrollments"));
     }
-
-    // --- checkEnrollment ---
 
     @Test
     void testCheckEnrollment_Enrolled_ReturnsTrue() {

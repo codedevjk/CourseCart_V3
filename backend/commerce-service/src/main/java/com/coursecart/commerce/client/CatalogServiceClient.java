@@ -2,29 +2,39 @@ package com.coursecart.commerce.client;
 
 import com.coursecart.commerce.dto.CourseDTO;
 import com.coursecart.commerce.exception.ResourceNotFoundException;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.RestTemplate;
-import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 
 @Component
 public class CatalogServiceClient {
 
-    private final RestTemplate restTemplate;
-    
-    private static final String CATALOG_SERVICE_URL = "http://catalog-service/api/catalog/courses/";
+    private static final String CATALOG_SERVICE_URL = "http://catalog-service";
+
+    private final WebClient.Builder webClientBuilder;
 
     @Autowired
-    public CatalogServiceClient(RestTemplate restTemplate) {
-        this.restTemplate = restTemplate;
+    public CatalogServiceClient(WebClient.Builder webClientBuilder) {
+        this.webClientBuilder = webClientBuilder;
     }
 
+    /**
+     * Fetches course details from the Catalog Service using WebClient.
+     * Circuit breaker opens after 50% failure rate in a 10-call sliding window.
+     * Falls back gracefully when Catalog Service is unavailable.
+     */
     @CircuitBreaker(name = "catalogService", fallbackMethod = "getCourseFallback")
     public CourseDTO getCourseById(Long courseId) {
         try {
-            return restTemplate.getForObject(CATALOG_SERVICE_URL + courseId, CourseDTO.class);
-        } catch (HttpClientErrorException.NotFound e) {
+            return webClientBuilder.build()
+                    .get()
+                    .uri(CATALOG_SERVICE_URL + "/api/catalog/courses/" + courseId)
+                    .retrieve()
+                    .bodyToMono(CourseDTO.class)
+                    .block();
+        } catch (WebClientResponseException.NotFound e) {
             throw new ResourceNotFoundException("Course not found with id: " + courseId);
         }
     }

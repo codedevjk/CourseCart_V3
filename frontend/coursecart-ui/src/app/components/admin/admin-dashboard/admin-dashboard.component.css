@@ -134,3 +134,12 @@
   font-weight: 700;
   color: var(--text-dark);
 }
+
+.recent-order-card { display: flex; justify-content: space-between; align-items: center; padding: 1rem; border: 1px solid var(--border-color); border-radius: 8px; margin-bottom: 0.5rem; background: var(--card-bg); }
+.order-info { display: flex; flex-direction: column; }
+.category-text { font-size: 0.75rem; color: var(--text-light); text-transform: uppercase; }
+.order-course-title { font-family: var(--font-sans); font-size: 1.1rem; margin-bottom: 0.25rem; }
+.order-date { font-size: 0.85rem; color: var(--text-light); }
+.payment-method { text-transform: capitalize; }
+.order-price { font-weight: 700; font-family: var(--font-sans); font-variant-numeric: tabular-nums; }
+

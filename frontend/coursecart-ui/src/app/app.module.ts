@@ -1,4 +1,4 @@
-﻿import { NgModule } from '@angular/core';
+import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
@@ -28,6 +28,7 @@ import { CategoryManagementComponent } from './components/admin/category-managem
 import { CourseManagementComponent } from './components/admin/course-management/course-management.component';
 import { LessonManagementComponent } from './components/admin/lesson-management/lesson-management.component';
 import { OrderHistoryComponent } from './components/commerce/order-history/order-history.component';
+import { ProfileComponent } from './components/user/profile/profile.component';
 
 @NgModule({
   declarations: [
@@ -53,7 +54,8 @@ import { OrderHistoryComponent } from './components/commerce/order-history/order
     CategoryManagementComponent,
     CourseManagementComponent,
     LessonManagementComponent,
-    OrderHistoryComponent
+    OrderHistoryComponent,
+    ProfileComponent
   ],
   imports: [
     BrowserModule,

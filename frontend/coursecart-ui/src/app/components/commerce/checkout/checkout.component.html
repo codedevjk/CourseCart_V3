@@ -1,8 +1,8 @@
-﻿<div *ngIf="isLoading" class="container" style="padding: 1.5rem 0;">
+<div *ngIf="isLoading" class="container state-container">
   <app-loading-spinner></app-loading-spinner>
 </div>
 
-<div *ngIf="!isLoading && errorMessage && !course" class="container" style="padding: 1.5rem 0;">
+<div *ngIf="!isLoading && errorMessage && !course" class="container state-container">
   <app-error-state [message]="errorMessage"></app-error-state>
 </div>
 

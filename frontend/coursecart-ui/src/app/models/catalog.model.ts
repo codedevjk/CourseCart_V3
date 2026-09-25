@@ -1,4 +1,4 @@
-﻿export interface Category {
+export interface Category {
   id: number;
   name: string;
 }
@@ -23,7 +23,7 @@ export interface Course {
   ratingCount?: number;
   bestseller?: boolean;
   lessonCount?: number;
-  imageUrl?: string;
+
   status: 'DRAFT' | 'ACTIVE' | 'INACTIVE';
 }
 
@@ -34,7 +34,7 @@ export interface CourseDetail {
   price: number;
   status: 'DRAFT' | 'ACTIVE' | 'INACTIVE';
   category: Category | null;
-  imageUrl?: string;
+
   lessons: Lesson[];
 }
 

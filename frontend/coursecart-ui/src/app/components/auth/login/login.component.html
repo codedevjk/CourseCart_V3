@@ -1,31 +1,31 @@
-﻿<div class="auth-page w-100">
-  <div class="auth-container shadow-lg overflow-hidden mx-auto d-flex flex-column">
-    <div class="row g-0 w-100 flex-grow-1 align-items-stretch">
+<div class="auth-page">
+  <div class="auth-container">
+    <div class="auth-row">
       
       <!-- Image Side -->
-      <div class="col-md-5 d-none d-md-block auth-image-panel position-relative">
-        <div class="overlay position-absolute w-100 h-100" style="z-index: 1;"></div>
-        <img src="assets/login-learning.png" alt="Learning Graphic" class="position-absolute top-0 start-0 w-100 h-100 object-fit-cover" style="z-index: 0;">
-        <div class="auth-image-text position-absolute text-white p-4 bottom-0 start-0" style="z-index: 2;">
-          <h2 class="display-6 fw-bold mb-2 fs-2">Expand your mind.</h2>
-          <p class="lead fs-6 mb-0">Join thousands of learners achieving their goals with CourseCart's premium courses.</p>
+      <div class="auth-image-panel">
+        <div class="auth-image-overlay"></div>
+        <img src="assets/login-learning.png" alt="Learning Graphic" class="auth-bg-image">
+        <div class="auth-image-text">
+          <h2 class="auth-banner-title">Expand your mind.</h2>
+          <p class="auth-banner-subtitle">Join thousands of learners achieving their goals with CourseCart's premium courses.</p>
         </div>
       </div>
 
       <!-- Form Side -->
-      <div class="col-md-7 d-flex flex-column justify-content-center p-4 p-lg-5 bg-white auth-form-panel">
-        <div class="text-center mb-4">
-          <h2 class="auth-title fw-bolder mb-1">Welcome Back</h2>
-          <p class="auth-subtitle text-muted mb-0">Please enter your details to sign in.</p>
+      <div class="auth-form-panel">
+        <div class="auth-header text-center">
+          <h2 class="auth-title">Welcome Back</h2>
+          <p class="auth-subtitle">Please enter your details to sign in.</p>
         </div>
         
-        <div *ngIf="errorMessage" class="alert alert-danger shadow-sm border-0 py-2 mb-3" role="alert">
+        <div *ngIf="errorMessage" class="alert alert-danger auth-error-alert" role="alert">
           <i class="bi bi-exclamation-circle-fill me-2"></i>{{ errorMessage }}
         </div>
         
-        <form (ngSubmit)="onSubmit()" #loginForm="ngForm" class="auth-form w-100">
-          <div class="mb-3 text-start">
-            <label for="username" class="form-label text-muted small fw-bold mb-1">Username</label>
+        <form (ngSubmit)="onSubmit()" #loginForm="ngForm" class="auth-form">
+          <div class="input-group-custom">
+            <label for="username" class="custom-label">Username</label>
             <input 
               type="text" 
               id="username" 
@@ -36,8 +36,8 @@
               placeholder="Username">
           </div>
           
-          <div class="mb-4 text-start">
-            <label for="password" class="form-label text-muted small fw-bold mb-1">Password</label>
+          <div class="input-group-custom">
+            <label for="password" class="custom-label">Password</label>
             <input 
               type="password" 
               id="password" 
@@ -48,19 +48,17 @@
               placeholder="Password">
           </div>
           
-          <button type="submit" class="btn btn-primary w-100 py-2 auth-submit-btn fw-bold shadow-sm" [disabled]="isLoading || !loginForm.form.valid">
+          <button type="submit" class="auth-submit-btn" [disabled]="isLoading || !loginForm.form.valid">
             <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
             {{ isLoading ? 'Logging in...' : 'Log In' }}
           </button>
         </form>
         
-        <div class="text-center mt-4 text-muted">
-          Don't have an account? <a routerLink="/register" class="auth-link fw-bold text-decoration-none">Sign up here</a>
+        <div class="auth-footer text-center">
+          Don't have an account? <a routerLink="/register" class="auth-link">Sign up here</a>
         </div>
       </div>
 
     </div>
   </div>
 </div>
-
-

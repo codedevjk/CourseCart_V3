@@ -1,7 +1,6 @@
 <div class="hero-section">
   <div class="container hero-container">
     <div class="hero-content">
-      
       <h1 class="hero-title">Short, readable courses you own forever.</h1>
       <p class="hero-subtitle">Buy one course at a time, keep permanent access, and tick off lessons as you go. No subscriptions, no video queues.</p>
     </div>
@@ -28,8 +27,8 @@
         <input 
           type="text" 
           [(ngModel)]="searchQuery" 
-          (ngModelChange)="applyFilters()" 
-          placeholder="Search course titles..." 
+          (keyup.enter)="applyFilters()"
+          placeholder="Search course titles... (press Enter to search)" 
           class="form-control">
       </div>
 
@@ -43,20 +42,20 @@
             {{ cat.name }}
           </option>
         </select>
-        <span class="courses-count">{{ filteredCourses.length }} courses</span>
+        <span class="courses-count">{{ totalElements }} total courses</span>
       </div>
     </div>
 
     <!-- Course Grid -->
     <main class="discovery-main">
       
-      <div *ngIf="filteredCourses.length > 0" class="course-grid">
-        <div class="course-col" *ngFor="let course of filteredCourses">
+      <div *ngIf="courses.length > 0" class="course-grid">
+        <div class="course-col" *ngFor="let course of courses">
           <app-course-card [course]="course"></app-course-card>
         </div>
       </div>
 
-      <div *ngIf="filteredCourses.length === 0">
+      <div *ngIf="courses.length === 0">
         <app-empty-state 
           message="No courses found" 
           submessage="Try adjusting your search or category filters."
@@ -64,7 +63,21 @@
         </app-empty-state>
       </div>
 
-    </main>
+      <!-- True Pagination Controls -->
+      <nav aria-label="Course pagination" class="mt-5" *ngIf="totalPages > 1">
+        <ul class="pagination justify-content-center">
+          <li class="page-item" [class.disabled]="currentPage === 0">
+            <button class="page-link" (click)="prevPage()" tabindex="-1">Previous</button>
+          </li>
+          <li class="page-item disabled">
+            <span class="page-link">Page {{ currentPage + 1 }} of {{ totalPages }}</span>
+          </li>
+          <li class="page-item" [class.disabled]="currentPage >= totalPages - 1">
+            <button class="page-link" (click)="nextPage()">Next</button>
+          </li>
+        </ul>
+      </nav>
 
+    </main>
   </div>
 </div>

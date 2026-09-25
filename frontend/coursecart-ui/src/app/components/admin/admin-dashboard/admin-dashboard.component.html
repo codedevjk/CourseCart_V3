@@ -1,4 +1,4 @@
-﻿<div class="dashboard-page">
+<div class="dashboard-page">
   <div class="dashboard-header">
     <h1>Dashboard</h1>
     <p class="subtitle">A quick read on catalog health and sales activity.</p>
@@ -36,13 +36,16 @@
     <p class="empty-text" *ngIf="recentOrders.length === 0">No purchases have been made yet.</p>
     
     <div class="orders-list" *ngIf="recentOrders.length > 0">
-      <div class="recent-order-card" *ngFor="let item of recentOrders" style="display: flex; justify-content: space-between; align-items: center; padding: 1rem; border: 1px solid var(--border-color); border-radius: 8px; margin-bottom: 0.5rem; background: var(--card-bg);">
-        <div class="order-info" style="display: flex; flex-direction: column;">
-          <span class="category-text" style="font-size: 0.75rem; color: var(--text-light); text-transform: uppercase;">{{ item.course?.category?.name || 'Unknown Category' }}</span>
-          <strong class="order-course-title" style="font-family: var(--font-sans); font-size: 1.1rem; margin-bottom: 0.25rem;">{{ item.course ? item.course.title : 'Unknown Course' }}</strong>
-          <span class="order-date" style="font-size: 0.85rem; color: var(--text-light);">{{ item.order.orderDate | date:'mediumDate' }} &bull; <span style="text-transform: capitalize;">{{ item.order.paymentMethod || 'Credit Card' }}</span></span>
+      <div class="recent-order-card" *ngFor="let item of recentOrders">
+        <div class="order-info">
+          <span class="category-text">{{ item.course?.category?.name || 'Unknown Category' }}</span>
+          <strong class="order-course-title">{{ item.course ? item.course.title : 'Unknown Course' }}</strong>
+          <span class="order-date">
+            Order #{{ item.order.id }} &bull; {{ item.order.orderDate | date:'mediumDate' }} &bull; 
+            <span class="payment-method">{{ item.order.paymentMethod || 'Credit Card' }}</span>
+          </span>
         </div>
-        <div class="order-price" style="font-weight: 700; font-family: var(--font-sans); font-variant-numeric: tabular-nums;">
+        <div class="order-price">
           {{ item.order.amountPaid === 0 ? 'Free' : (item.order.amountPaid | currency:'INR') }}
         </div>
       </div>

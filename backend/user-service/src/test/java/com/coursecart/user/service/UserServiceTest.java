@@ -8,6 +8,7 @@ import com.coursecart.user.entity.Role;
 import com.coursecart.user.entity.User;
 import com.coursecart.user.exception.DuplicateResourceException;
 import com.coursecart.user.exception.InvalidCredentialsException;
+import com.coursecart.user.exception.ResourceNotFoundException;
 import com.coursecart.user.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -15,11 +16,13 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.modelmapper.ModelMapper;
 
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -27,6 +30,9 @@ public class UserServiceTest {
 
     @Mock
     private UserRepository userRepository;
+    
+    @Mock
+    private ModelMapper modelMapper;
 
     @InjectMocks
     private UserService userService;
@@ -48,6 +54,15 @@ public class UserServiceTest {
 
         when(userRepository.existsByUsername("jane_doe")).thenReturn(false);
         when(userRepository.save(any(User.class))).thenReturn(testUser);
+        
+        when(modelMapper.map(any(UserRegistrationRequest.class), eq(User.class))).thenReturn(testUser);
+        
+        UserResponse mockResponse = new UserResponse();
+        mockResponse.setId(1L);
+        mockResponse.setUsername("jane_doe");
+        mockResponse.setRole("USER");
+        
+        when(modelMapper.map(any(User.class), eq(UserResponse.class))).thenReturn(mockResponse);
 
         UserResponse response = userService.register(request);
 
@@ -79,6 +94,12 @@ public class UserServiceTest {
         request.setPassword("password123");
 
         when(userRepository.findByUsername("jane_doe")).thenReturn(Optional.of(testUser));
+        
+        UserResponse mockResponse = new UserResponse();
+        mockResponse.setId(1L);
+        mockResponse.setUsername("jane_doe");
+        
+        when(modelMapper.map(any(User.class), eq(UserResponse.class))).thenReturn(mockResponse);
 
         UserResponse response = userService.login(request);
 
@@ -123,6 +144,13 @@ public class UserServiceTest {
     @Test
     void testGetUser_Success() {
         when(userRepository.findById(1L)).thenReturn(Optional.of(testUser));
+        
+        UserResponse mockResponse = new UserResponse();
+        mockResponse.setId(1L);
+        mockResponse.setUsername("jane_doe");
+        
+        when(modelMapper.map(any(User.class), eq(UserResponse.class))).thenReturn(mockResponse);
+        
         UserResponse response = userService.getUser(1L);
         assertNotNull(response);
         assertEquals(1L, response.getId());
@@ -132,7 +160,7 @@ public class UserServiceTest {
     @Test
     void testGetUser_NotFound_ThrowsResourceNotFoundException() {
         when(userRepository.findById(99L)).thenReturn(Optional.empty());
-        assertThrows(com.coursecart.user.exception.ResourceNotFoundException.class, () -> {
+        assertThrows(ResourceNotFoundException.class, () -> {
             userService.getUser(99L);
         });
     }

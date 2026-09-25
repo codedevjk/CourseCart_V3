@@ -164,3 +164,7 @@
 }
 
 
+
+.progress-stats { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; width: 100%; }
+.progress-sm { height: 6px; }
+

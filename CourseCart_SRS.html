@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -704,7 +704,7 @@
               <tr>
                 <td>API Gateway</td>
                 <td>8080</td>
-                <td><code>coursecart-api-gateway</code></td>
+                <td><code>api-gateway</code></td>
                 <td>None</td>
               </tr>
               <tr>
@@ -716,26 +716,26 @@
               <tr>
                 <td>User Service</td>
                 <td>8081</td>
-                <td><code>coursecart-user-service</code></td>
-                <td>coursecart_db</td>
+                <td><code>user-service</code></td>
+                <td>coursecart_user_db</td>
               </tr>
               <tr>
                 <td>Catalog Service</td>
                 <td>8082</td>
-                <td><code>coursecart-catalog-service</code></td>
-                <td>coursecart_db</td>
+                <td><code>catalog-service</code></td>
+                <td>coursecart_catalog_db</td>
               </tr>
               <tr>
                 <td>Commerce Service</td>
-                <td>8083</td>
-                <td><code>coursecart-commerce-service</code></td>
-                <td>coursecart_db</td>
+                <td>8084</td>
+                <td><code>commerce-service</code></td>
+                <td>coursecart_commerce_db</td>
               </tr>
               <tr>
                 <td>Enrollment Service</td>
-                <td>8084</td>
-                <td><code>coursecart-enrollment-service</code></td>
-                <td>coursecart_db</td>
+                <td>8083</td>
+                <td><code>enrollment-service</code></td>
+                <td>coursecart_enrollment_db</td>
               </tr>
               <tr>
                 <td>Angular Frontend</td>
@@ -746,7 +746,7 @@
             </tbody>
           </table>
         </div>
-        <p><em>Note: CourseCart uses a single shared MySQL database (<code>coursecart_db</code>) for all microservices.</em></p>
+        <p><em>Note: CourseCart uses <strong>separate, dedicated MySQL databases per microservice</strong> to ensure true service isolation. Each service owns its data exclusively and communicates with other services only via REST APIs — never via shared database joins.</em></p>
 
         <h3 class="sub-title" id="s2-2">2.2 Authentication & Authorization Design</h3>
         <div class="callout">
@@ -771,10 +771,11 @@
             <li>As an anonymous visitor, I want to securely register so that I can access the CourseCart platform and purchase courses.</li>
             <li>Customers shall be able to register using Full Name, Username, and Password.</li>
             <li>Usernames shall be unique across the system.</li>
-            <li>Duplicate username registrations shall not be allowed.</li>
+            <li>Duplicate username registrations shall not be allowed; the system must return an appropriate validation message.</li>
             <li>Newly registered users shall automatically receive the role <code>USER</code>.</li>
-            <li>Mandatory fields shall be validated before registration.</li>
+            <li>Mandatory fields shall be validated before registration (e.g., minimum lengths, no empty strings).</li>
             <li>Appropriate success, validation, and error messages shall be displayed.</li>
+            <li>The implementation must include reactive forms and seamless redirect to login upon success.</li>
           </ul>
         </div>
 
@@ -789,10 +790,13 @@
           <ul>
             <li>As a registered user, I want to log in so that I can access the application based on my assigned role.</li>
             <li>Users shall be able to log in using their Username and Password.</li>
-            <li>Authentication shall be performed by validating the entered credentials directly against stored database records (plaintext for demo purposes).</li>
+            <li>Authentication shall validate credentials against stored database records (plaintext for demo purposes).</li>
             <li>User role shall be identified during successful login.</li>
-            <li>Identity and role shall be stored securely in <code>localStorage</code>.</li>
-            <li>Users shall be able to log out by clearing the active session in local storage.</li>
+            <li>Identity and role shall be stored securely in <code>localStorage</code> (Frontend-managed identity).</li>
+            <li>Valid login routes <code>USER</code> to Catalog/My Learning and <code>ADMIN</code> to the Dashboard.</li>
+            <li>Users shall be able to log out by clearing the active session.</li>
+            <li>Mandatory fields shall be validated before login.</li>
+            <li>Appropriate error messages (e.g., "Invalid credentials") shall be displayed.</li>
           </ul>
         </div>
 
@@ -807,6 +811,8 @@
           <ul>
             <li>As a logged-in user, I want to view my basic profile details, so that I can verify my account information.</li>
             <li>System displays the user's name and username securely.</li>
+            <li>Profile data is fetched from the User Service using the active username.</li>
+            <li>The UI should provide a clean card or view representing the user's identity.</li>
           </ul>
         </div>
 
@@ -820,10 +826,12 @@
           <h4 class="sub2-title">Acceptance Criteria</h4>
           <ul>
             <li>As an admin, I want to manage course categories, so that I can organize the catalog.</li>
-            <li>Admin can create a new category with a name.</li>
-            <li>Admin can edit an existing category name.</li>
-            <li>Admin can delete a category. If courses are attached to the category, the database foreign key constraint will prevent deletion. <strong>[Note: The current implementation does not have an explicit application-level guard; protection is enforced by the MySQL FK constraint. DataIntegrityViolationException is not specifically handled in GlobalExceptionHandler � this is a known gap.]</strong></li>
-            <li>Appropriate validation and error handling shall be implemented.</li>
+            <li>Admin can view a paginated or list view of all categories.</li>
+            <li>Admin can create a new category by providing a Name.</li>
+            <li>Admin can edit an existing category's Name.</li>
+            <li>Admin can attempt to delete a category.</li>
+            <li>Deletion shall be blocked if active courses are attached to the category (enforced via database FK constraint).</li>
+            <li>The frontend must gracefully handle deletion rejections and display a user-friendly error popup (e.g., "Cannot delete category because it has active courses attached.").</li>
           </ul>
         </div>
 
@@ -837,10 +845,12 @@
           <h4 class="sub2-title">Acceptance Criteria</h4>
           <ul>
             <li>As an admin, I want to manage course metadata, so that I can define what is sold on the platform.</li>
-            <li>Admin creates and edits courses (Title, Description, Price, Category, Image URL).</li>
-            <li>Admin can assign exactly one category to a course. <strong>[Updated: Admin cannot publish or activate a course unless a valid category is assigned to it.]</strong></li>
-            <li>Admin can set a fixed price (0.00 for free).</li>
-            <li>New courses default to <code>Draft</code> status.</li>
+            <li>Admin can view all courses regardless of status.</li>
+            <li>Admin can create and edit courses with fields: Title, Description, Price, and Category ID.</li>
+            <li>Admin must assign exactly one existing category to a course.</li>
+            <li>Admin can set a fixed price (numeric, 0.00 for free).</li>
+            <li>New courses shall default to <code>Draft</code> status upon creation.</li>
+            <li>Form validation ensures price is non-negative and required fields are populated before submission.</li>
           </ul>
         </div>
 
@@ -854,9 +864,11 @@
           <h4 class="sub2-title">Acceptance Criteria</h4>
           <ul>
             <li>As an admin, I want to manage lessons within a course, so that I can build the educational content.</li>
-            <li>Admin can create a text-based lesson (Title, Text Content) under a course.</li>
-            <li>Admin can edit lesson content.</li>
-            <li>Admin can delete a lesson.</li>
+            <li>Admin can navigate into a specific course to manage its lessons.</li>
+            <li>Admin can create a text-based lesson (Title, Text Content) for a course.</li>
+            <li>Admin can edit existing lesson titles and text content.</li>
+            <li>Admin can delete a lesson completely.</li>
+            <li>Deleting a lesson should automatically cascade or handle completion records for enrolled users appropriately without breaking their progress view.</li>
           </ul>
         </div>
 
@@ -870,10 +882,11 @@
           <h4 class="sub2-title">Acceptance Criteria</h4>
           <ul>
             <li>As an admin, I want to toggle a course's status between Draft, Active, and Inactive, so that I can control its public availability.</li>
-            <li>Admin can change a Draft course to Active.</li>
-            <li>Admin can change an Active course to Inactive.</li>
-            <li>Inactive courses immediately disappear from the public catalog.</li>
-            <li>Status changes do not affect existing enrolled users' access to the course content.</li>
+            <li>Course statuses strictly allow: <code>Draft</code>, <code>Active</code>, <code>Inactive</code>.</li>
+            <li>Admin can change a Draft course to Active to publish it.</li>
+            <li>Admin can change an Active course to Inactive to retire it.</li>
+            <li>Inactive courses must immediately disappear from the public catalog for new customers.</li>
+            <li>Status changes must NOT affect existing enrolled users; they retain access to Inactive courses in My Learning.</li>
           </ul>
         </div>
 
@@ -887,10 +900,12 @@
           <h4 class="sub2-title">Acceptance Criteria</h4>
           <ul>
             <li>As a user, I want to browse and search the active course catalog, so that I can find courses to learn.</li>
-            <li>System displays only <code>Active</code> courses.</li>
-            <li>List supports pagination (server-side via Spring Pageable). <strong>[Implemented]</strong></li>
-            <li>User can filter the list by selecting a specific category. <strong>[Partially Implemented � frontend UI filter only; backend does not filter by categoryId]</strong></li>
-            <li>User can search by course title. <strong>[Partially Implemented � frontend UI search only; backend does not accept a search parameter]</strong></li>
+            <li>System displays a grid/list of ONLY <code>Active</code> courses.</li>
+            <li>User can filter the catalog by selecting a specific Category.</li>
+            <li>User can search for courses by Course Title (partial match logic).</li>
+            <li>The list must support backend pagination (displaying 12 courses per page) for scalability.</li>
+            <li>Each course card displays Title, Price, and Category name.</li>
+            <li>The implementation must include loading spinners and empty state messages when no courses match.</li>
           </ul>
         </div>
 
@@ -904,10 +919,11 @@
           <h4 class="sub2-title">Acceptance Criteria</h4>
           <ul>
             <li>As a user, I want to view detailed information about a course, so that I can decide whether to purchase it.</li>
-            <li>System displays course Title, Description, Category, Image, and Price.</li>
-            <li>System displays a read-only list of Lesson titles (syllabus).</li>
-            <li>Displays "Buy Now" button if the user is logged in and not already enrolled.</li>
-            <li>Displays "Already Enrolled" if the user owns the course.</li>
+            <li>System displays course Title, Description, Category, and Price.</li>
+            <li>System displays a read-only list of Lesson titles (the syllabus).</li>
+            <li>If the user is logged in and NOT enrolled, a "Buy Now" button is displayed.</li>
+            <li>If the user is logged in and ALREADY enrolled, an "Already Enrolled" or "Go to Course" button is displayed.</li>
+            <li>If the user is anonymous, they are prompted to Login/Register to purchase.</li>
           </ul>
         </div>
 
@@ -921,11 +937,13 @@
           <h4 class="sub2-title">Acceptance Criteria</h4>
           <ul>
             <li>As a user, I want to purchase a course through a simulated checkout, so that I can gain access to its content.</li>
-            <li>System presents a checkout UI for the single selected course.</li>
-            <li>Duplicate purchase is prevented (UI blocks checkout if already enrolled).</li>
+            <li>Clicking "Buy Now" directs the user to a mock checkout flow.</li>
+            <li>System displays the course details and total price to be paid.</li>
             <li>User selects a mock payment method and system simulates processing.</li>
-            <li>On success, an Order record and an Enrollment record are created.</li>
-            <li>Failed mock attempts do not create Enrollment records.</li>
+            <li>Duplicate purchase is strictly prevented via API validation if the user is already enrolled.</li>
+            <li>On success, the Commerce Service creates an Order record AND triggers the Enrollment Service to create an Enrollment record.</li>
+            <li>Failed mock attempts do not create Enrollment or Order records.</li>
+            <li>User is redirected to My Learning or an Order Success page upon completion.</li>
           </ul>
         </div>
 
@@ -939,8 +957,10 @@
           <h4 class="sub2-title">Acceptance Criteria</h4>
           <ul>
             <li>As a user, I want to view my past successful purchases, so that I have a record of my transactions.</li>
-            <li>System displays a list of the user's successful orders, including Course Title, Date, and Price paid.</li>
+            <li>System displays a tabular list of the user's successful orders.</li>
+            <li>Fields displayed: Course Title, Order Date, and Total Price Paid.</li>
             <li>Failed mock attempts are NOT shown in this history.</li>
+            <li>The list should be ordered by Date descending (newest first).</li>
           </ul>
         </div>
 
@@ -954,8 +974,9 @@
           <h4 class="sub2-title">Acceptance Criteria</h4>
           <ul>
             <li>As a user, I want to see a list of all courses I am enrolled in, so that I can resume learning.</li>
-            <li>System displays all courses the user is enrolled in (including inactive courses).</li>
-            <li>System displays the overall progress percentage for each course.</li>
+            <li>System displays all enrolled courses (including those now marked Inactive by Admin).</li>
+            <li>System calculates and displays the overall progress percentage (e.g., 50%) for each course.</li>
+            <li>Empty states are handled gracefully if the user has no enrollments yet.</li>
           </ul>
         </div>
 
@@ -969,8 +990,9 @@
           <h4 class="sub2-title">Acceptance Criteria</h4>
           <ul>
             <li>As an enrolled user, I want to read the lessons of a course, so that I can learn the material.</li>
-            <li>User can click a lesson to view its text content.</li>
-            <li>Access is strictly denied (403 or UI redirect) if the user is not enrolled.</li>
+            <li>User can click into an enrolled course to view the syllabus and lesson contents.</li>
+            <li>User views the text-based content of the selected lesson in a reading view.</li>
+            <li>Access is strictly denied (backend 403 or frontend redirect) if a non-enrolled user attempts to access the lesson content directly via URL.</li>
           </ul>
         </div>
 
@@ -984,8 +1006,9 @@
           <h4 class="sub2-title">Acceptance Criteria</h4>
           <ul>
             <li>As an enrolled user, I want to mark lessons as complete, so that my overall course progress is updated.</li>
-            <li>User can toggle a lesson's completion status (Complete/Incomplete).</li>
-            <li>Toggling status immediately updates the course's overall progress percentage calculation.</li>
+            <li>User can toggle a lesson's completion status (Complete/Incomplete) via a checkbox or button.</li>
+            <li>Toggling status immediately updates the backend tracking record for that specific user and lesson.</li>
+            <li>The course's overall progress percentage recalculates immediately and updates the UI in real-time.</li>
           </ul>
         </div>
 
@@ -999,10 +1022,12 @@
           <h4 class="sub2-title">Acceptance Criteria</h4>
           <ul>
             <li>As an admin, I want to view high-level platform metrics, so that I can understand business performance.</li>
-            <li>System displays Total Registered Users.</li>
-            <li>System displays Total Active Courses.</li>
+            <li>System displays Total Registered Users (count).</li>
+            <li>System displays Total Active Courses (count).</li>
             <li>System displays Total Enrollments across all courses.</li>
             <li>System displays Total Revenue (Sum of successful order prices).</li>
+            <li>Metrics should be fetched efficiently from the respective microservices and displayed in dashboard cards.</li>
+            <li>System displays recent orders in a tabular view, including the Order ID for admin reference.</li>
           </ul>
         </div>
 
@@ -1042,8 +1067,7 @@
       <!-- ── Data Persistence ── -->
       <section id="s-data">
         <h2 class="sec-title">Data Persistence Rules</h2>
-        <p>The application shall use the shared MySQL database (<code>coursecart_db</code>) as the permanent storage for
-          all business data.</p>
+        <p>The application shall use <strong>four separate MySQL databases</strong> — one per microservice — as the permanent storage for all business data: <code>coursecart_user_db</code>, <code>coursecart_catalog_db</code>, <code>coursecart_commerce_db</code>, and <code>coursecart_enrollment_db</code>. No cross-service database joins are permitted; all cross-service data access is done through REST API calls.</p>
         <ul>
           <li>All successful Create, Update, and Delete operations shall be immediately persisted in the database.</li>
           <li>All View and Search operations shall always retrieve the latest persisted records.</li>
@@ -1159,7 +1183,8 @@
           <h3>Commerce Service (Port: 8084)</h3>
           <p><strong>Responsibilities</strong></p>
           <ul>
-            <li>Mock Order Checkout (Fetches price from Catalog Service via RestTemplate)</li>
+            <li>Mock Order Checkout (Fetches price from Catalog Service via <strong>WebClient</strong> with Resilience4j Circuit Breaker)</li>
+            <li>Triggers Enrollment Service via <strong>WebClient</strong> to create enrollment on successful payment</li>
             <li>Order Tracking</li>
             <li>Revenue Reporting</li>
           </ul>
@@ -1196,14 +1221,20 @@
           </li>
           <li>Ensure MySQL is running on port 3306.</li>
           <li>
-            <div>Initialize the single database by running the SQL scripts from the <code>database/</code> folder:
-              <br><code>mysql -u root -p &lt; database/schema.sql</code>
-              <br><code>mysql -u root -p &lt; database/test-data-seed.sql</code>
-            </div>
+            <div>Initialize the databases by running the consolidated SQL scripts from the <code>src/main/resources</code> folder of each microservice:
+                <br><code>mysql -u root -p &lt; backend/user-service/src/main/resources/user_db.sql</code>
+                <br><code>mysql -u root -p &lt; backend/catalog-service/src/main/resources/catalog_db.sql</code>
+                <br><code>mysql -u root -p &lt; backend/commerce-service/src/main/resources/commerce_db.sql</code>
+                <br><code>mysql -u root -p &lt; backend/enrollment-service/src/main/resources/enrollment_db.sql</code>
+              </div>
           </li>
           <li>
-            <div>Start each backend microservice using <code>mvn spring-boot:run</code> in this order:
-              coursecart-api-gateway → coursecart-user-service → coursecart-catalog-service → coursecart-commerce-service → coursecart-enrollment-service.
+            <div>Start each backend microservice in separate terminals:
+              <br><code>cd backend/api-gateway && mvn spring-boot:run</code>
+              <br><code>cd backend/user-service && mvn spring-boot:run</code>
+              <br><code>cd backend/catalog-service && mvn spring-boot:run</code>
+              <br><code>cd backend/enrollment-service && mvn spring-boot:run</code>
+              <br><code>cd backend/commerce-service && mvn spring-boot:run</code>
             </div>
           </li>
           <li>
@@ -1224,7 +1255,7 @@
 
         <h4 class="sub2-title">Frontend</h4>
         <div class="pill-group">
-          <span class="pill">Angular 16.2.x</span>
+          <span class="pill">Angular 16.2.x (^16.2.0)</span>
           <span class="pill">TypeScript 5.1</span>
           <span class="pill">HTML5</span>
           <span class="pill">Vanilla CSS3</span>
@@ -1286,7 +1317,7 @@
         <ul>
           <li>Data Transfer Objects (DTOs) must be used for all API request and response payloads.</li>
           <li>Database Entities shall NEVER be exposed directly through REST APIs.</li>
-          <li>Use ModelMapper (or equivalent) to strictly enforce deep conversions between Entities and DTOs within the Service layer.</li>
+          <li>Use manual mapping to strictly enforce deep conversions between Entities and DTOs within the Service layer.</li>
         </ul>
 
         <h3 class="sub-title">9.4 Database Interaction</h3>
@@ -1306,15 +1337,18 @@
         <ul>
           <li>Register all microservices with Spring Cloud Consul for dynamic service discovery and health monitoring.</li>
           <li>Route all frontend and external client requests exclusively through the Spring Cloud Gateway.</li>
-          <li>Use <code>RestTemplate</code> for synchronous inter-service communication via HTTP GET/POST calls.</li>
+          <li>Use <code>WebClient</code> (from Spring WebFlux) for inter-service HTTP communication. The <code>@LoadBalanced WebClient.Builder</code> bean enables load-balanced calls using Consul service names (e.g., <code>http://catalog-service</code>). Do NOT use the deprecated <code>RestTemplate</code>.</li>
           <li>Implement Spring Cloud Circuit Breaker (Resilience4j) for inter-service calls using the following precise configuration:
             <ul>
               <li><code>slidingWindowSize</code>: 10 (Evaluates the last 10 calls)</li>
               <li><code>failureRateThreshold</code>: 50% (Opens the circuit if 50% of calls fail)</li>
               <li><code>waitDurationInOpenState</code>: 60 seconds (Time before transitioning to half-open state)</li>
+              <li><code>permittedNumberOfCallsInHalfOpenState</code>: 3</li>
+              <li>All circuit breaker configuration must be defined in <code>application.yml</code> under <code>resilience4j.circuitbreaker.instances</code>.</li>
               <li>Define appropriate <code>@CircuitBreaker</code> fallback methods to ensure graceful degradation.</li>
             </ul>
           </li>
+          <li>All services must use <code>application.yml</code> for all configuration (not <code>application.properties</code>).</li>
         </ul>
 
         <h3 class="sub-title">9.7 Validation</h3>

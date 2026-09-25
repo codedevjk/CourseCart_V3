@@ -1,4 +1,4 @@
-﻿<nav class="navbar">
+<nav class="navbar">
   <div class="navbar-container">
     
     <!-- LEFT: Logo and Tabs -->
@@ -10,7 +10,6 @@
       <div class="navbar-tabs">
         <a routerLink="/courses" routerLinkActive="active" class="nav-tab">Catalog</a>
         
-        <!-- User Tabs -->
         <ng-container *ngIf="isLoggedIn && !isAdmin">
           <a routerLink="/learning" routerLinkActive="active" class="nav-tab">My Learning</a>
           <a routerLink="/orders" routerLinkActive="active" class="nav-tab">Orders</a>
@@ -31,7 +30,7 @@
       
       <!-- Logged In State (User or Admin) -->
       <div class="user-menu" *ngIf="isLoggedIn">
-        <span class="user-greeting">{{ userName }}</span>
+        <a routerLink="/profile" class="user-greeting">{{ userName }}</a>
         <button (click)="logout()" class="btn btn-outline nav-btn">Sign out</button>
       </div>
 

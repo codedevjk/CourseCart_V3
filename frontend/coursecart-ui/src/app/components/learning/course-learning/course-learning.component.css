@@ -200,3 +200,11 @@
   box-shadow: 0 10px 30px rgba(0,0,0,0.2);
   border: none;
 }
+
+.state-container { padding: 4rem 0; }
+.action-error { margin-bottom: 1rem; }
+.unavailable-modal { max-width: 450px; text-align: center; padding: 3rem 2rem; }
+.unavailable-icon { font-size: 3rem; color: #dc3545; margin-bottom: 1rem; }
+.unavailable-title { margin-bottom: 1rem; }
+.unavailable-desc { color: var(--text-light); margin-bottom: 2rem; }
+

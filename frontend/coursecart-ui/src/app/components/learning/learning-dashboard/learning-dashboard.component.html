@@ -1,4 +1,4 @@
-﻿<div class="learning-dashboard-page">
+<div class="learning-dashboard-page">
   <div class="hero-section">
     <div class="container hero-container">
       <div class="hero-content">
@@ -34,11 +34,11 @@
             
             <div class="course-footer progress-footer">
               <div class="progress-container w-100">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; width: 100%;">
+                <div class="progress-stats">
                   <span class="progress-label">Overall Progress</span>
                   <span class="progress-percent">{{ item.progress | number:'1.0-0' }}%</span>
                 </div>
-                <div class="progress" style="height: 6px;">
+                <div class="progress progress-sm">
                   <div class="progress-bar" role="progressbar" [style.width]="(item.progress || 0) + '%'" [attr.aria-valuenow]="item.progress" aria-valuemin="0" aria-valuemax="100"></div>
                 </div>
               </div>

@@ -11,15 +11,16 @@ import com.coursecart.commerce.entity.Order;
 import com.coursecart.commerce.exception.BadRequestException;
 import com.coursecart.commerce.exception.ConflictException;
 import com.coursecart.commerce.repository.OrderRepository;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -29,44 +30,45 @@ public class CommerceServiceImpl implements CommerceService {
     private final OrderRepository orderRepository;
     private final CatalogServiceClient catalogServiceClient;
     private final EnrollmentServiceClient enrollmentServiceClient;
+    private final ModelMapper modelMapper;
 
     @Autowired
     public CommerceServiceImpl(OrderRepository orderRepository,
                                CatalogServiceClient catalogServiceClient,
-                               EnrollmentServiceClient enrollmentServiceClient) {
+                               EnrollmentServiceClient enrollmentServiceClient,
+                               ModelMapper modelMapper) {
         this.orderRepository = orderRepository;
         this.catalogServiceClient = catalogServiceClient;
         this.enrollmentServiceClient = enrollmentServiceClient;
+        this.modelMapper = modelMapper;
     }
 
     @Override
     @Transactional
     public CheckoutResponse processCheckout(CheckoutRequest request) {
-        // 1. Get Course from Catalog (throws ResourceNotFound if not found)
         CourseDTO course = catalogServiceClient.getCourseById(request.getCourseId());
 
-        // Verify course is ACTIVE
         if (!"ACTIVE".equals(course.getStatus())) {
             throw new BadRequestException("Cannot purchase inactive course");
         }
 
-        // 2. Check Enrollment
         boolean isEnrolled = enrollmentServiceClient.checkEnrollment(request.getUserId(), request.getCourseId());
         if (isEnrolled) {
             throw new ConflictException("User is already enrolled in this course");
         }
 
-        // 3. Mock Payment 
-        // We simulate payment success as long as we reach this point.
         if (request.getPaymentMethod() == null || request.getPaymentMethod().trim().isEmpty()) {
              throw new BadRequestException("Payment method is required");
         }
 
-        // 4. Save Order
-        Order order = new Order(request.getUserId(), request.getCourseId(), course.getPrice(), request.getPaymentMethod());
+        Order order = new Order();
+        order.setUserId(request.getUserId());
+        order.setCourseId(request.getCourseId());
+        order.setAmountPaid(course.getPrice());
+        order.setPaymentMethod(request.getPaymentMethod());
+        
         Order savedOrder = orderRepository.save(order);
 
-        // 5. Create Enrollment
         EnrollmentCreateRequest enrollmentReq = new EnrollmentCreateRequest(request.getUserId(), request.getCourseId());
         enrollmentServiceClient.createEnrollment(enrollmentReq);
 
@@ -102,16 +104,6 @@ public class CommerceServiceImpl implements CommerceService {
     }
 
     private OrderDTO convertToDTO(Order order) {
-        return new OrderDTO(
-                order.getId(),
-                order.getUserId(),
-                order.getCourseId(),
-                order.getAmountPaid(),
-                order.getOrderDate(),
-                order.getPaymentMethod()
-        );
+        return modelMapper.map(order, OrderDTO.class);
     }
 }
-
-
-

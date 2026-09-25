@@ -10,15 +10,18 @@ import com.coursecart.user.exception.DuplicateResourceException;
 import com.coursecart.user.exception.InvalidCredentialsException;
 import com.coursecart.user.exception.ResourceNotFoundException;
 import com.coursecart.user.repository.UserRepository;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 @Service
 public class UserService {
 
     private final UserRepository userRepository;
+    private final ModelMapper modelMapper;
 
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, ModelMapper modelMapper) {
         this.userRepository = userRepository;
+        this.modelMapper = modelMapper;
     }
 
     public UserResponse register(UserRegistrationRequest request) {
@@ -26,15 +29,11 @@ public class UserService {
             throw new DuplicateResourceException("Username already exists");
         }
         
-        User user = new User(
-            request.getName(), 
-            request.getUsername(), 
-            request.getPassword(), 
-            Role.USER
-        );
+        User user = modelMapper.map(request, User.class);
+        user.setRole(Role.USER);
         
         user = userRepository.save(user);
-        return new UserResponse(user);
+        return modelMapper.map(user, UserResponse.class);
     }
 
     public UserResponse login(UserLoginRequest request) {
@@ -46,13 +45,13 @@ public class UserService {
             throw new InvalidCredentialsException("Invalid credentials");
         }
         
-        return new UserResponse(user);
+        return modelMapper.map(user, UserResponse.class);
     }
 
     public UserResponse getUser(Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
-        return new UserResponse(user);
+        return modelMapper.map(user, UserResponse.class);
     }
 
     public CountResponse countUsers() {
