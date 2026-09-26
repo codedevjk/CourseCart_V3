@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { UserService } from '../../../services/user.service';
 import { AuthService } from '../../../services/auth.service';
@@ -8,22 +9,30 @@ import { AuthService } from '../../../services/auth.service';
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css']
 })
-export class LoginComponent {
-  credentials = {
-    username: '',
-    password: ''
-  };
+export class LoginComponent implements OnInit {
+  loginForm!: FormGroup;
   errorMessage = '';
   isLoading = false;
 
   constructor(
+    private fb: FormBuilder,
     private userService: UserService,
     private authService: AuthService,
     private router: Router
   ) {}
 
+  ngOnInit(): void {
+    this.loginForm = this.fb.group({
+      username: ['', Validators.required],
+      password: ['', Validators.required]
+    });
+  }
+
+  get username() { return this.loginForm.get('username'); }
+  get password() { return this.loginForm.get('password'); }
+
   onSubmit(): void {
-    if (!this.credentials.username || !this.credentials.password) {
+    if (this.loginForm.invalid) {
       this.errorMessage = 'Please enter both username and password';
       return;
     }
@@ -31,14 +40,19 @@ export class LoginComponent {
     this.isLoading = true;
     this.errorMessage = '';
 
-    this.userService.login(this.credentials).subscribe({
+    this.userService.login(this.loginForm.value).subscribe({
       next: (user) => {
         this.authService.setCurrentUser(user);
-        this.router.navigate(['/courses']);
+        
+        if (user.role === 'ADMIN') {
+          this.router.navigate(['/admin']);
+        } else {
+          this.router.navigate(['/courses']);
+        }
       },
       error: (err) => {
         this.isLoading = false;
-        this.errorMessage = 'Invalid username or password. Please try again.';
+        this.errorMessage = 'Invalid credentials. Please try again.';
       }
     });
   }

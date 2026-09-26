@@ -67,7 +67,14 @@ export class LearningDashboardComponent implements OnInit {
             map(result => {
               let progress = 0;
               if (result.course && result.course.lessons && result.course.lessons.length > 0) {
-                progress = (result.completedLessonIds.length / result.course.lessons.length) * 100;
+                let validCompletedCount = 0;
+                const completedSet = new Set(result.completedLessonIds);
+                for (const lesson of result.course.lessons) {
+                  if (completedSet.has(lesson.id)) {
+                    validCompletedCount++;
+                  }
+                }
+                progress = (validCompletedCount / result.course.lessons.length) * 100;
               }
               return {
                 enrollment: enr,

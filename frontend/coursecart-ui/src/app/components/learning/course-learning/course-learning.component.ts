@@ -1,4 +1,4 @@
-﻿import { Component, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { EnrollmentService } from '../../../services/enrollment.service';
 import { CatalogService } from '../../../services/catalog.service';
@@ -107,25 +107,46 @@ export class CourseLearningComponent implements OnInit {
     return this.completedLessonIds.has(lessonId);
   }
 
-  markComplete(): void {
-    if (!this.activeLesson || this.isCompleted(this.activeLesson.id)) return;
+  toggleCompletion(event: any): void {
+    if (!this.activeLesson) return;
     
     const lessonId = this.activeLesson.id;
-    this.enrollmentService.completeLesson(this.enrollmentId, lessonId).subscribe({
+    const isCompleted = event.target.checked;
+    
+    this.enrollmentService.completeLesson(this.enrollmentId, lessonId, isCompleted).subscribe({
       next: () => {
-        // Idempotent add
-        this.completedLessonIds.add(lessonId);
+        if (isCompleted) {
+          this.completedLessonIds.add(lessonId);
+        } else {
+          this.completedLessonIds.delete(lessonId);
+        }
       },
       error: (err) => {
-        this.actionError = 'Failed to mark lesson as complete. Please try again.';
+        this.actionError = 'Failed to update lesson status. Please try again.';
+        // Revert checkbox state on error
+        event.target.checked = !isCompleted;
         setTimeout(() => this.actionError = '', 3000);
       }
     });
   }
 
+  get validCompletedCount(): number {
+    if (!this.course || !this.course.lessons) return 0;
+    let count = 0;
+    for (const lesson of this.course.lessons) {
+      if (this.completedLessonIds.has(lesson.id)) {
+        count++;
+      }
+    }
+    return count;
+  }
+
   get progressPercentage(): number {
     if (!this.course || !this.course.lessons || this.course.lessons.length === 0) return 0;
-    return (this.completedLessonIds.size / this.course.lessons.length) * 100;
+    
+    // Only count completed IDs that actually exist in the current course.lessons array
+    // This safely handles cases where an admin deleted a lesson after a user completed it.
+    return (this.validCompletedCount / this.course.lessons.length) * 100;
   }
 }
 

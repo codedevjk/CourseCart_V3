@@ -22,9 +22,6 @@ export class ErrorInterceptor implements HttpInterceptor {
         
         if (error.error && error.error.timestamp) {
           apiError = error.error as ApiError;
-          console.error(`API Error [${apiError.status}]: ${apiError.message}`);
-        } else {
-          console.error('An unexpected error occurred:', error);
         }
 
         return throwError(() => error);

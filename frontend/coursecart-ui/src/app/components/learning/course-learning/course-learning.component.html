@@ -15,7 +15,7 @@
       </a>
       <h2 class="course-sidebar-title">{{ course.title }}</h2>
       <div class="progress-wrapper">
-        <span class="progress-text">{{ completedLessonIds.size }}/{{ course.lessons.length }} lessons &middot; {{ progressPercentage | number:'1.0-0' }}%</span>
+        <span class="progress-text">{{ validCompletedCount }}/{{ course.lessons.length }} lessons &middot; {{ progressPercentage | number:'1.0-0' }}%</span>
       </div>
     </div>
     
@@ -38,7 +38,7 @@
     <div *ngIf="activeLesson" class="lesson-viewer-card">
       <div class="lesson-content">
         <h1 class="lesson-content-title">{{ activeLesson.title }}</h1>
-        <div class="content-body" class="content-body">{{ activeLesson.content }}></div>
+        <div class="content-body">{{ activeLesson.content }}</div>
         
                 <hr class="lesson-divider">
         
@@ -50,8 +50,7 @@
           <input 
             type="checkbox" 
             [checked]="isCompleted(activeLesson.id)"
-            [disabled]="isCompleted(activeLesson.id)"
-            (change)="markComplete()">
+            (change)="toggleCompletion($event)">
           <span class="checkbox-text">Mark this lesson complete</span>
         </label>
       </div>

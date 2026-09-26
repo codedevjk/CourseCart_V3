@@ -58,7 +58,7 @@ export class LessonManagementComponent implements OnInit {
         this.isLoading = false;
       },
       error: (err) => {
-        console.error('Error loading lessons', err);
+
         this.error = 'Failed to load lessons.';
         this.isLoading = false;
       }

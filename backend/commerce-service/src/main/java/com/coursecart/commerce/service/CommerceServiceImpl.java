@@ -77,7 +77,7 @@ public class CommerceServiceImpl implements CommerceService {
 
     @Override
     public List<OrderDTO> getOrdersByUserId(Long userId) {
-        return orderRepository.findByUserId(userId)
+        return orderRepository.findByUserIdOrderByOrderDateDesc(userId)
                 .stream()
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());

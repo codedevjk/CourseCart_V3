@@ -1,4 +1,4 @@
-﻿import { Component, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CatalogService } from '../../../services/catalog.service';
 import { Category } from '../../../models/catalog.model';
 
@@ -38,7 +38,7 @@ export class CategoryManagementComponent implements OnInit {
         this.isLoading = false;
       },
       error: (err) => {
-        console.error('Error loading categories', err);
+
         this.error = 'Failed to load categories.';
         this.isLoading = false;
       }

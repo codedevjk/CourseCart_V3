@@ -21,7 +21,7 @@ export class HomeComponent implements OnInit {
       next: (cats) => {
         this.categories = cats;
       },
-      error: () => console.error('Failed to load categories')
+      error: () => {}
     });
 
     // Fetch top 3 courses

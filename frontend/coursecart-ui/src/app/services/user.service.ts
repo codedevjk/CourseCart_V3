@@ -16,7 +16,7 @@ export class UserService {
     return this.http.post<User>(`${this.apiUrl}/register`, user);
   }
 
-  login(credentials: any): Observable<User> {
+  login(credentials: { username: string; password?: string }): Observable<User> {
     return this.http.post<User>(`${this.apiUrl}/login`, credentials);
   }
 

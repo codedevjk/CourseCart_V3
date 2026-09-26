@@ -1,4 +1,4 @@
-﻿import { Component, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { forkJoin } from 'rxjs';
 import { UserService } from '../../../services/user.service';
 import { CatalogService } from '../../../services/catalog.service';
@@ -61,7 +61,7 @@ export class AdminDashboardComponent implements OnInit {
         this.loadRecentOrders();
       },
       error: (err) => {
-        console.error('Error loading dashboard metrics', err);
+
         this.error = 'Failed to load dashboard metrics. Please ensure backend services are running.';
         this.isLoading = false;
       }
@@ -84,7 +84,7 @@ export class AdminDashboardComponent implements OnInit {
           return of([]);
         }
         
-        const enrichedRequests = orders.map((order: any) => {
+        const enrichedRequests = orders.map((order: Order) => {
           return this.catalogService.getCourse(order.courseId).pipe(
             map(course => ({ order, course })),
             catchError(() => of({ order, course: null }))
@@ -99,7 +99,7 @@ export class AdminDashboardComponent implements OnInit {
         this.isLoading = false;
       },
       error: (err) => {
-        console.error('Error loading recent orders', err);
+
         this.isLoading = false;
       }
     });

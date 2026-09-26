@@ -10,7 +10,7 @@ import java.util.List;
 
 @Repository
 public interface OrderRepository extends JpaRepository<Order, Long> {
-    List<Order> findByUserId(Long userId);
+    List<Order> findByUserIdOrderByOrderDateDesc(Long userId);
 
     @Query("SELECT SUM(o.amountPaid) FROM Order o")
     BigDecimal calculateTotalRevenue();

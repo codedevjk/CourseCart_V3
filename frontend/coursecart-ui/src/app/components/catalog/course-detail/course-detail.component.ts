@@ -33,7 +33,6 @@ export class CourseDetailComponent implements OnInit {
     const idParam = this.route.snapshot.paramMap.get('courseId');
     if (idParam) {
       this.courseId = +idParam;
-      this.fetchCourse();
     } else {
       this.errorMessage = 'Invalid course ID';
       this.isLoading = false;
@@ -48,8 +47,11 @@ export class CourseDetailComponent implements OnInit {
         this.enrollmentService.getEnrollments(user.id).subscribe({
           next: (enrollments) => {
             this.isEnrolled = enrollments.some(e => e.courseId === this.courseId);
+            this.fetchCourse();
           }
         });
+      } else {
+        this.fetchCourse();
       }
     });
   }
@@ -58,6 +60,13 @@ export class CourseDetailComponent implements OnInit {
     this.catalogService.getCourse(this.courseId).subscribe({
       next: (data) => {
         this.course = data;
+        
+        // Enforce US 07: Inactive/Draft courses must disappear for new customers
+        if (this.course.status !== 'ACTIVE' && !this.isEnrolled && !this.isAdmin) {
+          this.errorMessage = 'This course is no longer available in the public catalog.';
+          this.course = null;
+        }
+        
         this.isLoading = false;
       },
       error: (err) => {

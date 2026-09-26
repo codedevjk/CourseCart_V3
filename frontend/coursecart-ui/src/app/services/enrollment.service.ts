@@ -21,8 +21,8 @@ export class EnrollmentService {
     return this.http.get<number[]>(`${this.apiUrl}/${enrollmentId}/progress`);
   }
 
-  completeLesson(enrollmentId: number, lessonId: number): Observable<void> {
-    return this.http.post<void>(`${this.apiUrl}/${enrollmentId}/lessons/${lessonId}/complete`, { completed: true });
+  completeLesson(enrollmentId: number, lessonId: number, completed: boolean = true): Observable<void> {
+    return this.http.post<void>(`${this.apiUrl}/${enrollmentId}/lessons/${lessonId}/complete`, { completed });
   }
 
   getEnrollmentCount(): Observable<{ totalEnrollments: number }> {

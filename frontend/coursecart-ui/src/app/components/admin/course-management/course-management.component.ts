@@ -1,4 +1,4 @@
-﻿import { Component, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CatalogService } from '../../../services/catalog.service';
 import { Course, Category } from '../../../models/catalog.model';
 
@@ -34,7 +34,7 @@ export class CourseManagementComponent implements OnInit {
   loadCategories(): void {
     this.catalogService.getCategories().subscribe({
       next: (data) => this.categories = data,
-      error: (err) => console.error('Error loading categories', err)
+      error: (err) => {}
     });
   }
 
@@ -47,7 +47,7 @@ export class CourseManagementComponent implements OnInit {
         this.isLoading = false;
       },
       error: (err) => {
-        console.error('Error loading courses', err);
+
         this.error = 'Failed to load courses.';
         this.isLoading = false;
       }

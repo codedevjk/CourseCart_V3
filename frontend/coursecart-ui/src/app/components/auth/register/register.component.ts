@@ -1,46 +1,56 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { UserService } from '../../../services/user.service';
-import { AuthService } from '../../../services/auth.service';
 
 @Component({
   selector: 'app-register',
   templateUrl: './register.component.html',
-  styleUrls: ['./register.component.css'] // We will share login.component.css styles or duplicate them
+  styleUrls: ['./register.component.css']
 })
-export class RegisterComponent {
-  user = {
-    name: '',
-    username: '',
-    password: ''
-  };
+export class RegisterComponent implements OnInit {
+  registerForm!: FormGroup;
   errorMessage = '';
+  successMessage = '';
   isLoading = false;
 
   constructor(
+    private fb: FormBuilder,
     private userService: UserService,
-    private authService: AuthService,
     private router: Router
   ) {}
 
+  ngOnInit(): void {
+    this.registerForm = this.fb.group({
+      name: ['', [Validators.required, Validators.minLength(2)]],
+      username: ['', [Validators.required, Validators.minLength(3)]],
+      password: ['', [Validators.required, Validators.minLength(6)]]
+    });
+  }
+
+  // Helper getters for template
+  get name() { return this.registerForm.get('name'); }
+  get username() { return this.registerForm.get('username'); }
+  get password() { return this.registerForm.get('password'); }
+
   onSubmit(): void {
-    if (!this.user.name || !this.user.username || !this.user.password) {
-      this.errorMessage = 'Please fill out all fields';
+    if (this.registerForm.invalid) {
+      this.errorMessage = 'Please fill out all fields correctly.';
       return;
     }
 
     this.isLoading = true;
     this.errorMessage = '';
+    this.successMessage = '';
 
-    this.userService.register(this.user).subscribe({
-      next: (registeredUser) => {
-        // According to US01, we might just get the user. Let's log them in automatically.
-        // Actually, let's call login to be safe, or just set it if we trust it. 
-        // US01 says "Success (201): { "id": 1, "name": "Jane", "username": "jane_doe", "role": "USER" }"
-        // US02 says "Success (200): { "id": 1, ... } (Frontend saves this in localStorage)."
-        // Let's set it directly.
-        this.authService.setCurrentUser(registeredUser);
-        this.router.navigate(['/courses']);
+    this.userService.register(this.registerForm.value).subscribe({
+      next: () => {
+        this.isLoading = false;
+        this.successMessage = 'Registration successful! Redirecting to login...';
+        // Seamless redirect to login upon success
+        setTimeout(() => {
+          this.router.navigate(['/login']);
+        }, 1500);
       },
       error: (err) => {
         this.isLoading = false;

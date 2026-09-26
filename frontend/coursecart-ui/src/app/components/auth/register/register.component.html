@@ -22,18 +22,24 @@
         <div *ngIf="errorMessage" class="alert alert-danger auth-error-alert" role="alert">
           <i class="bi bi-exclamation-circle-fill me-2"></i>{{ errorMessage }}
         </div>
+        <div *ngIf="successMessage" class="alert alert-success auth-success-alert" role="alert">
+          <i class="bi bi-check-circle-fill me-2"></i>{{ successMessage }}
+        </div>
         
-        <form (ngSubmit)="onSubmit()" #registerForm="ngForm" class="auth-form">
+        <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="auth-form">
           <div class="input-group-custom">
             <label for="name" class="custom-label">Full Name</label>
             <input 
               type="text" 
               id="name" 
-              name="name" 
-              [(ngModel)]="user.name" 
-              required 
+              formControlName="name" 
               class="form-control custom-input"
+              [ngClass]="{'is-invalid': name?.invalid && (name?.dirty || name?.touched)}"
               placeholder="Full Name">
+            <div *ngIf="name?.invalid && (name?.dirty || name?.touched)" class="invalid-feedback">
+              <span *ngIf="name?.errors?.['required']">Full Name is required.</span>
+              <span *ngIf="name?.errors?.['minlength']">Name must be at least 2 characters.</span>
+            </div>
           </div>
 
           <div class="input-group-custom">
@@ -41,11 +47,14 @@
             <input 
               type="text" 
               id="username" 
-              name="username" 
-              [(ngModel)]="user.username" 
-              required 
+              formControlName="username" 
               class="form-control custom-input"
+              [ngClass]="{'is-invalid': username?.invalid && (username?.dirty || username?.touched)}"
               placeholder="Username">
+            <div *ngIf="username?.invalid && (username?.dirty || username?.touched)" class="invalid-feedback">
+              <span *ngIf="username?.errors?.['required']">Username is required.</span>
+              <span *ngIf="username?.errors?.['minlength']">Username must be at least 3 characters.</span>
+            </div>
           </div>
           
           <div class="input-group-custom">
@@ -53,14 +62,17 @@
             <input 
               type="password" 
               id="password" 
-              name="password" 
-              [(ngModel)]="user.password" 
-              required 
+              formControlName="password" 
               class="form-control custom-input"
+              [ngClass]="{'is-invalid': password?.invalid && (password?.dirty || password?.touched)}"
               placeholder="Password">
+            <div *ngIf="password?.invalid && (password?.dirty || password?.touched)" class="invalid-feedback">
+              <span *ngIf="password?.errors?.['required']">Password is required.</span>
+              <span *ngIf="password?.errors?.['minlength']">Password must be at least 6 characters.</span>
+            </div>
           </div>
           
-          <button type="submit" class="auth-submit-btn" [disabled]="isLoading || !registerForm.form.valid">
+          <button type="submit" class="auth-submit-btn" [disabled]="isLoading || registerForm.invalid">
             <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
             {{ isLoading ? 'Creating Account...' : 'Sign Up' }}
           </button>
