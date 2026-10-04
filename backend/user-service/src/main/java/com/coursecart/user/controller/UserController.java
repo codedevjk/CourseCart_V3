@@ -41,7 +41,7 @@ public class UserController {
 
     @GetMapping("/{userId}")
     public UserResponse getUser(@PathVariable Long userId) {
-        return userService.getUser(userId);
+        throw new UnsupportedOperationException("TODO[TRAINEE]: Implement getUser");
     }
 
     @GetMapping("/count")

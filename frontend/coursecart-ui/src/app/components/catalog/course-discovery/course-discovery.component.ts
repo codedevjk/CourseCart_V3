@@ -54,24 +54,8 @@ export class CourseDiscoveryComponent implements OnInit {
   }
 
   loadCoursesPage(): void {
-    this.isLoading = true;
-    this.catalogService.getCourses(
-      this.selectedCategoryId !== null ? this.selectedCategoryId : undefined,
-      this.searchQuery ? this.searchQuery : undefined,
-      this.currentPage,
-      this.pageSize
-    ).subscribe({
-      next: (page) => {
-        this.courses = page.content;
-        this.totalPages = page.totalPages;
-        this.totalElements = page.totalElements;
-        this.isLoading = false;
-      },
-      error: () => {
-        this.errorMessage = 'Failed to load courses.';
-        this.isLoading = false;
-      }
-    });
+    // TODO[TRAINEE]: Implement loadCoursesPage
+    this.isLoading = false;
   }
 
   applyFilters(): void {

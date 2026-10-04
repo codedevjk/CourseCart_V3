@@ -29,29 +29,29 @@ public class CourseController {
             Pageable pageable,
             @RequestParam(required = false) Long categoryId,
             @RequestParam(required = false) String title) {
-        return ResponseEntity.ok(catalogService.getActiveCourses(pageable, categoryId, title));
+        throw new UnsupportedOperationException("TODO[TRAINEE]: Implement getActiveCourses");
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<CourseDetailDTO> getCourseById(@PathVariable Long id) {
-        return ResponseEntity.ok(catalogService.getActiveCourseById(id));
+        throw new UnsupportedOperationException("TODO[TRAINEE]: Implement getCourseById");
     }
 
     // --- ADMIN COURSE APIs ---
 
     @GetMapping("/admin")
     public ResponseEntity<List<CourseDTO>> getAllCoursesAdmin() {
-        return ResponseEntity.ok(catalogService.getAllCoursesAdmin());
+        throw new UnsupportedOperationException("TODO[TRAINEE]: Implement getAllCoursesAdmin");
     }
 
     @PostMapping
     public ResponseEntity<CourseDTO> createCourse(@Valid @RequestBody CourseRequest request) {
-        return new ResponseEntity<>(catalogService.createCourse(request), HttpStatus.CREATED);
+        throw new UnsupportedOperationException("TODO[TRAINEE]: Implement createCourse");
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<CourseDTO> updateCourse(@PathVariable Long id, @Valid @RequestBody CourseRequest request) {
-        return ResponseEntity.ok(catalogService.updateCourse(id, request));
+        throw new UnsupportedOperationException("TODO[TRAINEE]: Implement updateCourse");
     }
 
     @PutMapping("/{id}/status")
@@ -61,8 +61,7 @@ public class CourseController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteCourse(@PathVariable Long id) {
-        catalogService.deleteCourse(id);
-        return ResponseEntity.noContent().build();
+        throw new UnsupportedOperationException("TODO[TRAINEE]: Implement deleteCourse");
     }
 
     @GetMapping("/count")

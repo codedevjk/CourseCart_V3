@@ -7,7 +7,7 @@ The Master Project contains 15 User Stories. To create effective training module
 
 ## 📘 Version 1 (V1) - "The E-Commerce Pipeline"
 **Focus:** The complete storefront flow (Categories -> Courses -> Publish -> Search -> View -> Buy -> Receipt).
-**Trainee Implements (7 Stories):**
+**Trainee Implements (8 Stories):**
 - **US 03** – View Profile (User Service)
 - **US 04** – Category Management (Catalog Service)
 - **US 05** – Course Management (Catalog Service)
@@ -52,21 +52,22 @@ The Master Project contains 15 User Stories. To create effective training module
 
 ## 📙 Version 3 (V3) - "The Full-Stack Sampler"
 **Focus:** Tracing a user journey horizontally across the entire ecosystem.
-**Trainee Implements (7 Stories):**
+**Trainee Implements (8 Stories):**
 - **US 03** – View Profile (User Service)
 - **US 05** – Course Management (Catalog Service)
 - **US 08** – Browse and Search Catalog (Catalog Service)
 - **US 09** – View Course Details (Catalog Service)
 - **US 10** – Single Course Purchase (Commerce Service)
+- **US 11** – View Order History (Commerce Service)
 - **US 12** – My Learning Dashboard (Enrollment Service)
 - **US 14** – Track Lesson Progress (Enrollment Service)
 
 **Backend Files to Hollow Out:**
 - `UserController.java`, `UserServiceImpl.java` (US 03)
 - `CourseController.java`, `CatalogServiceImpl.java` (US 05, 08, 09)
-- `CommerceController.java`, `CommerceServiceImpl.java` (US 10)
+- `CommerceController.java`, `CommerceServiceImpl.java` (US 10, 11)
 - `EnrollmentController.java`, `EnrollmentServiceImpl.java` (US 12, 14)
 
 **Frontend Files to Hollow Out:**
 - Services: `user.service.ts`, `catalog.service.ts`, `commerce.service.ts`, `enrollment.service.ts`
-- Components: `profile`, `course-management`, `course-discovery`, `course-detail`, `checkout`, `learning-dashboard`, `course-learning`
+- Components: `profile`, `course-management`, `course-discovery`, `course-detail`, `checkout`, `order-history`, `learning-dashboard`, `course-learning`

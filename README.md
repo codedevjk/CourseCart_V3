@@ -10,16 +10,16 @@
 
 <p align="center">
   <strong>A modern, full-stack microservices platform for online course purchasing and learning.</strong><br/>
-  MASTER IMPLEMENTATION (Fully Implemented)
+  TRAINEE STARTER CODEBASE (Version 3)
 </p>
 
 ---
 
 ## 🎯 About This Project
 
-This is the **MASTER IMPLEMENTATION** of the CourseCart system. It is a fully functional, enterprise-grade microservices application designed to showcase modern development practices, featuring strict service isolation and resilient inter-service communication.
+This is the **TRAINEE STARTER CODEBASE (Version 3: The Full-Stack Sampler)** for the CourseCart system. It is a partially implemented, enterprise-grade microservices application designed as a training assignment. 
 
-All features are fully implemented, and there are no trainee assignments or stubs in this version.
+Trainees are expected to implement core business logic across various backend services and frontend components to enable horizontal ecosystem tracing. Follow the instructions in the `CourseCart_SRS-V3.html` specification document.
 
 ---
 
@@ -30,7 +30,7 @@ All features are fully implemented, and there are no trainee assignments or stub
 | Feature | Details |
 | --- | --- |
 | **Registration** | Register with Full Name, Username, and Password. Usernames must be unique. Default role: `USER`. |
-| **Login / Logout** | Login with username and password. Session stored securely in `localStorage`. Logout clears session. |
+| **Login / Logout** | Login with username and password. Session stored securely in `sessionStorage`. Logout clears session. |
 | **Course Browsing** | Browse active courses; filter by category (e.g., Software Engineering, Data Science); search by course title. True backend pagination. |
 | **Course Details** | View full course details: title, description, category, price, and syllabus. Displays context-aware "Buy Now" or "Continue Learning". |
 | **Mock Checkout** | Unified checkout workspace. Simulates payment process. Creates Commerce order and triggers Enrollment service creation synchronously. Duplicate purchase strictly prevented. |
@@ -185,7 +185,7 @@ This project uses **Frontend-Managed Identity and Access Control**:
 
 - Login through User Service.
 - User credentials are validated against stored credentials.
-- User information is stored in `localStorage`.
+- User information is stored in `sessionStorage`.
 - `AuthGuard`/`AdminGuard` control frontend navigation.
 
 **Backend Identity:**

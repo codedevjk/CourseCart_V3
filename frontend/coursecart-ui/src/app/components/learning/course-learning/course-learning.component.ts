@@ -46,57 +46,8 @@ export class CourseLearningComponent implements OnInit {
   }
 
   loadLearningData(): void {
-    const user = this.authService.getCurrentUser();
-    if (!user) {
-      this.router.navigate(['/login']);
-      return;
-    }
-
-    this.enrollmentService.getEnrollments(user.id).subscribe({
-      next: (enrollments) => {
-        const enrollment = enrollments.find(e => e.courseId === this.courseId);
-        if (!enrollment) {
-          this.errorMessage = 'You are not enrolled in this course.';
-          this.isLoading = false;
-          return;
-        }
-
-        this.enrollmentId = enrollment.id;
-        
-        // Fetch course and progress
-        forkJoin({
-          course: this.catalogService.getCourse(this.courseId),
-          progress: this.enrollmentService.getLessonProgress(this.enrollmentId).pipe(catchError(() => of([])))
-        }).subscribe({
-          next: (result) => {
-            this.course = result.course;
-            
-            // Check if course is available
-            if (!this.course.category) {
-              this.isCourseAvailable = false;
-            }
-            this.completedLessonIds = new Set(result.progress);
-            
-            // Auto-select first lesson if available
-            if (this.course.lessons && this.course.lessons.length > 0) {
-              // Optionally select the first uncompleted lesson, or just the first one
-              const firstUncompleted = this.course.lessons.find(l => !this.completedLessonIds.has(l.id));
-              this.activeLesson = firstUncompleted || this.course.lessons[0];
-            }
-            
-            this.isLoading = false;
-          },
-          error: (err) => {
-            this.errorMessage = 'Failed to load course materials.';
-            this.isLoading = false;
-          }
-        });
-      },
-      error: (err) => {
-        this.errorMessage = 'Failed to verify enrollment.';
-        this.isLoading = false;
-      }
-    });
+    // TODO[TRAINEE]: Implement loadLearningData
+    this.isLoading = false;
   }
 
   selectLesson(lesson: Lesson): void {
@@ -108,26 +59,7 @@ export class CourseLearningComponent implements OnInit {
   }
 
   toggleCompletion(event: any): void {
-    if (!this.activeLesson) return;
-    
-    const lessonId = this.activeLesson.id;
-    const isCompleted = event.target.checked;
-    
-    this.enrollmentService.completeLesson(this.enrollmentId, lessonId, isCompleted).subscribe({
-      next: () => {
-        if (isCompleted) {
-          this.completedLessonIds.add(lessonId);
-        } else {
-          this.completedLessonIds.delete(lessonId);
-        }
-      },
-      error: (err) => {
-        this.actionError = 'Failed to update lesson status. Please try again.';
-        // Revert checkbox state on error
-        event.target.checked = !isCompleted;
-        setTimeout(() => this.actionError = '', 3000);
-      }
-    });
+    // TODO[TRAINEE]: Implement toggleCompletion
   }
 
   get validCompletedCount(): number {

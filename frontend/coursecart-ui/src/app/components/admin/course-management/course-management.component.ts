@@ -39,19 +39,8 @@ export class CourseManagementComponent implements OnInit {
   }
 
   loadCourses(): void {
-    this.isLoading = true;
-    this.error = '';
-    this.catalogService.getAdminCourses().subscribe({
-      next: (data) => {
-        this.courses = data;
-        this.isLoading = false;
-      },
-      error: (err) => {
-
-        this.error = 'Failed to load courses.';
-        this.isLoading = false;
-      }
-    });
+    // TODO[TRAINEE]: Implement loadCourses
+    this.isLoading = false;
   }
 
   openCreateModal(): void {
@@ -82,28 +71,7 @@ export class CourseManagementComponent implements OnInit {
   }
 
   saveCourse(): void {
-    if (!this.currentCourse.title.trim() || !this.currentCourse.categoryId || this.currentCourse.price < 0) {
-      this.formError = 'Please provide valid course details';
-      return;
-    }
-
-    if (this.isEditing) {
-      this.catalogService.updateCourse(this.currentCourse.id, this.currentCourse).subscribe({
-        next: () => {
-          this.loadCourses();
-          this.cancelEdit();
-        },
-        error: (err) => this.formError = err.error?.message || 'Failed to update course'
-      });
-    } else {
-      this.catalogService.createCourse(this.currentCourse).subscribe({
-        next: () => {
-          this.loadCourses();
-          this.cancelEdit();
-        },
-        error: (err) => this.formError = err.error?.message || 'Failed to create course'
-      });
-    }
+    // TODO[TRAINEE]: Implement saveCourse (create and update)
   }
 
   changeStatus(course: Course, newStatus: string): void {

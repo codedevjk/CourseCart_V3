@@ -91,75 +91,7 @@ export class CheckoutComponent implements OnInit {
   }
 
   onSubmit(): void {
-    if (!this.course) return;
-    
-    this.errorMessage = '';
-
-    if (this.selectedTab === 'Card') {
-      const cardClean = this.cardNumber.replace(/\s+/g, '');
-      if (!/^\d{16}$/.test(cardClean)) {
-        this.errorMessage = 'Please enter a valid 16-digit card number.';
-        return;
-      }
-      if (!/^(0[1-9]|1[0-2])\/\d{2}$/.test(this.cardExpiry)) {
-        this.errorMessage = 'Please enter a valid expiry date (MM/YY).';
-        return;
-      }
-      if (!/^\d{3}$/.test(this.cardCvc)) {
-        this.errorMessage = 'Please enter a valid 3-digit CVC.';
-        return;
-      }
-    } else if (this.selectedTab === 'UPI') {
-      if (!this.upiId || !this.upiId.includes('@')) {
-        this.errorMessage = 'Please enter a valid UPI ID containing "@".';
-        return;
-      }
-    } else if (this.selectedTab === 'Net Banking') {
-      if (!this.selectedBank) {
-        this.errorMessage = 'Please select a bank.';
-        return;
-      }
-    }
-
-    
-
-    const user = this.authService.getCurrentUser();
-    if (!user) {
-      this.router.navigate(['/login']);
-      return;
-    }
-
-    this.isProcessing = true;
-    
-    let finalPaymentMethod = this.selectedTab;
-    if (this.selectedTab === 'Net Banking') {
-      finalPaymentMethod = 'Net Banking (' + this.selectedBank + ')';
-    } else if (this.selectedTab === 'Card') {
-      finalPaymentMethod = 'Credit Card';
-    }
-
-    const request = {
-      userId: user.id,
-      courseId: this.course.id,
-      paymentMethod: finalPaymentMethod
-    };
-
-    this.commerceService.checkout(request).subscribe({
-      next: (response) => {
-        this.isProcessing = false;
-        this.router.navigate(['/purchase-success']);
-      },
-      error: (err) => {
-        this.isProcessing = false;
-        if (err.status === 409) {
-          this.errorMessage = 'You are already enrolled in this course.';
-        } else if (err.status === 400) {
-          this.errorMessage = 'Course is currently unavailable for purchase.';
-        } else {
-          this.errorMessage = 'An error occurred during checkout. Please try again.';
-        }
-      }
-    });
+    // TODO[TRAINEE]: Implement checkout form submission
   }
 }
 

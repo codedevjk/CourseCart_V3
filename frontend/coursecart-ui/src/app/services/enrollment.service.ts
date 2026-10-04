@@ -13,8 +13,8 @@ export class EnrollmentService {
   constructor(private http: HttpClient) { }
 
   getEnrollments(userId: number): Observable<Enrollment[]> {
-    const params = new HttpParams().set('userId', userId.toString());
-    return this.http.get<Enrollment[]>(this.apiUrl, { params });
+    // TODO[TRAINEE]: Implement getEnrollments
+    return new Observable<Enrollment[]>();
   }
 
   getLessonProgress(enrollmentId: number): Observable<number[]> {
@@ -22,7 +22,8 @@ export class EnrollmentService {
   }
 
   completeLesson(enrollmentId: number, lessonId: number, completed: boolean = true): Observable<void> {
-    return this.http.post<void>(`${this.apiUrl}/${enrollmentId}/lessons/${lessonId}/complete`, { completed });
+    // TODO[TRAINEE]: Implement completeLesson
+    return new Observable<void>();
   }
 
   getEnrollmentCount(): Observable<{ totalEnrollments: number }> {

@@ -1,4 +1,4 @@
-﻿# =========================
+# =========================
 # IDEs & Editors
 # =========================
 .idea/
@@ -82,4 +82,5 @@ yarn-error.log*
 # Custom Extra / Unwanted Files
 # =========================
 extra/
+scratch/
 

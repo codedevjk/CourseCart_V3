@@ -29,29 +29,28 @@ export class CatalogService {
   }
 
   getCourses(categoryId?: number, search?: string, page?: number, size?: number): Observable<PageResponse<Course>> {
-    let params = new HttpParams();
-    if (categoryId !== undefined && categoryId !== null) params = params.set('categoryId', categoryId.toString());
-    if (search) params = params.set('search', search);
-    if (page !== undefined && page !== null) params = params.set('page', page.toString());
-    if (size !== undefined && size !== null) params = params.set('size', size.toString());
-
-    return this.http.get<PageResponse<Course>>(`${this.apiUrl}/courses`, { params });
+    // TODO[TRAINEE]: Implement getCourses
+    return new Observable<PageResponse<Course>>();
   }
 
   getCourse(id: number): Observable<CourseDetail> {
-    return this.http.get<CourseDetail>(`${this.apiUrl}/courses/${id}`);
+    // TODO[TRAINEE]: Implement getCourse
+    return new Observable<CourseDetail>();
   }
 
   getAdminCourses(): Observable<Course[]> {
-    return this.http.get<Course[]>(`${this.apiUrl}/courses/admin`);
+    // TODO[TRAINEE]: Implement getAdminCourses
+    return new Observable<Course[]>();
   }
 
   createCourse(course: Course): Observable<Course> {
-    return this.http.post<Course>(`${this.apiUrl}/courses`, course);
+    // TODO[TRAINEE]: Implement createCourse
+    return new Observable<Course>();
   }
 
   updateCourse(id: number, course: Course): Observable<Course> {
-    return this.http.put<Course>(`${this.apiUrl}/courses/${id}`, course);
+    // TODO[TRAINEE]: Implement updateCourse
+    return new Observable<Course>();
   }
 
   updateCourseStatus(id: number, status: string): Observable<void> {

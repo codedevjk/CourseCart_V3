@@ -1,4 +1,4 @@
-﻿import { Injectable } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Order, CheckoutRequest } from '../models/commerce.model';
@@ -13,7 +13,8 @@ export class CommerceService {
   constructor(private http: HttpClient) { }
 
   checkout(request: CheckoutRequest): Observable<any> {
-    return this.http.post<any>(`${this.apiUrl}/checkout`, request);
+    // TODO[TRAINEE]: Implement checkout
+    return new Observable<any>();
   }
 
     getAllOrders(page: number = 0, size: number = 5): Observable<any> {
@@ -28,8 +29,8 @@ export class CommerceService {
   }
 
   getOrders(userId: number): Observable<Order[]> {
-    const params = new HttpParams().set('userId', userId.toString());
-    return this.http.get<Order[]>(`${this.apiUrl}/orders`, { params });
+    // TODO[TRAINEE]: Implement getOrders
+    return new Observable<Order[]>();
   }
 
   getRevenue(): Observable<{ totalRevenue: number }> {

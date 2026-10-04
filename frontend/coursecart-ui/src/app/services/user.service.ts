@@ -21,7 +21,8 @@ export class UserService {
   }
 
   getProfile(userId: number): Observable<User> {
-    return this.http.get<User>(`${this.apiUrl}/${userId}`);
+    // TODO[TRAINEE]: Implement getProfile
+    return new Observable<User>();
   }
 
   getUserCount(): Observable<{ totalUsers: number }> {

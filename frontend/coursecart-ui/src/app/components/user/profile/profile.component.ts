@@ -23,36 +23,6 @@ export class ProfileComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    const currentUser = this.authService.getCurrentUser();
-    if (!currentUser) {
-      this.errorMessage = 'You must be logged in to view your profile.';
-      this.isLoading = false;
-      return;
-    }
-
-    this.userService.getProfile(currentUser.id).subscribe({
-      next: (data) => {
-        this.user = data;
-        
-        if (this.user.role === 'USER') {
-          this.enrollmentService.getEnrollments(this.user.id).subscribe({
-            next: (enrollments) => {
-              this.coursesOwned = enrollments.length;
-              this.isLoading = false;
-            },
-            error: () => {
-              // Gracefully handle enrollment fetch failure
-              this.isLoading = false;
-            }
-          });
-        } else {
-          this.isLoading = false;
-        }
-      },
-      error: () => {
-        this.errorMessage = 'Failed to load profile. Please try again.';
-        this.isLoading = false;
-      }
-    });
+    // TODO[TRAINEE]: Implement initialization logic
   }
 }

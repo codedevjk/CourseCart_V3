@@ -1,4 +1,4 @@
-﻿import { Component, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommerceService } from '../../../services/commerce.service';
 import { CatalogService } from '../../../services/catalog.service';
 import { AuthService } from '../../../services/auth.service';
@@ -29,43 +29,11 @@ export class OrderHistoryComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    const currentUser = this.authService.getCurrentUser();
-    if (!currentUser || !currentUser.id) {
-      this.error = 'User not logged in.';
-      this.loading = false;
-      return;
-    }
-
-    forkJoin({
-      orders: this.commerceService.getOrders(currentUser.id),
-      courses: this.catalogService.getAdminCourses().pipe(catchError(() => of([])))
-    }).subscribe({
-      next: ({ orders, courses }) => {
-        if (!orders || orders.length === 0) {
-          this.orders = [];
-          this.loading = false;
-          return;
-        }
-
-        const courseMap = new Map();
-        courses.forEach(c => courseMap.set(c.id, c));
-
-        this.orders = orders.map(order => ({
-          order,
-          course: courseMap.get(order.courseId) || null
-        })).sort((a, b) => new Date(b.order.orderDate).getTime() - new Date(a.order.orderDate).getTime());
-        
-        this.loading = false;
-      },
-      error: (err) => {
-        this.error = 'Failed to load order history.';
-        this.loading = false;
-      }
-    });
+    // TODO[TRAINEE]: Implement order history retrieval logic
   }
 
   getCardColor(index: number): string {
-    return "theme-${index % 4}";
+    return `theme-${index % 4}`;
   }
 
   getCategoryInitials(categoryName: string): string {

@@ -46,57 +46,7 @@ export class LearningDashboardComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    const user = this.authService.getCurrentUser();
-    if (!user) return; // Should be handled by AuthGuard
-
-    this.isLoading = true;
-    this.errorMessage = '';
-
-    this.enrollmentService.getEnrollments(user.id).pipe(
-      switchMap(enrollments => {
-        if (enrollments.length === 0) {
-          return of([]);
-        }
-        
-        // For each enrollment, fetch course details and progress concurrently
-        const courseRequests: Observable<EnrolledCourseData>[] = enrollments.map(enr => {
-          return forkJoin({
-            course: this.catalogService.getCourse(enr.courseId).pipe(catchError(() => of(null))),
-            completedLessonIds: this.enrollmentService.getLessonProgress(enr.id).pipe(catchError(() => of([])))
-          }).pipe(
-            map(result => {
-              let progress = 0;
-              if (result.course && result.course.lessons && result.course.lessons.length > 0) {
-                let validCompletedCount = 0;
-                const completedSet = new Set(result.completedLessonIds);
-                for (const lesson of result.course.lessons) {
-                  if (completedSet.has(lesson.id)) {
-                    validCompletedCount++;
-                  }
-                }
-                progress = (validCompletedCount / result.course.lessons.length) * 100;
-              }
-              return {
-                enrollment: enr,
-                course: result.course,
-                progress: progress
-              };
-            })
-          );
-        });
-
-        return forkJoin(courseRequests);
-      })
-    ).subscribe({
-      next: (data) => {
-        this.enrolledCourses = data.filter(d => d.course !== null);
-        this.isLoading = false;
-      },
-      error: (err) => {
-        this.errorMessage = 'Failed to load your learning dashboard. Please try again.';
-        this.isLoading = false;
-      }
-    });
+    // TODO[TRAINEE]: Implement initialization logic
   }
 }
 

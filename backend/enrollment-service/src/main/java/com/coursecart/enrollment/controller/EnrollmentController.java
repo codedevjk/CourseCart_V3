@@ -24,7 +24,7 @@ public class EnrollmentController {
 
     @GetMapping
     public ResponseEntity<List<EnrollmentDTO>> getEnrollmentsByUserId(@RequestParam Long userId) {
-        return ResponseEntity.ok(enrollmentService.getEnrollmentsByUserId(userId));
+        throw new UnsupportedOperationException("TODO[TRAINEE]: Implement getEnrollmentsByUserId");
     }
 
     @GetMapping("/{enrollmentId}/progress")
@@ -34,8 +34,7 @@ public class EnrollmentController {
 
     @PostMapping("/{enrollmentId}/lessons/{lessonId}/complete")
     public ResponseEntity<Void> markLessonComplete(@PathVariable Long enrollmentId, @PathVariable Long lessonId, @Valid @RequestBody LessonCompleteRequest request) {
-        enrollmentService.markLessonComplete(enrollmentId, lessonId, request.getCompleted());
-        return ResponseEntity.ok().build();
+        throw new UnsupportedOperationException("TODO[TRAINEE]: Implement markLessonComplete");
     }
 
     @GetMapping("/count")

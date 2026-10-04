@@ -57,23 +57,8 @@ export class CourseDetailComponent implements OnInit {
   }
 
   fetchCourse(): void {
-    this.catalogService.getCourse(this.courseId).subscribe({
-      next: (data) => {
-        this.course = data;
-        
-        // Enforce US 07: Inactive/Draft courses must disappear for new customers
-        if (this.course.status !== 'ACTIVE' && !this.isEnrolled && !this.isAdmin) {
-          this.errorMessage = 'This course is no longer available in the public catalog.';
-          this.course = null;
-        }
-        
-        this.isLoading = false;
-      },
-      error: (err) => {
-        this.errorMessage = 'Failed to load course details. It may be unavailable.';
-        this.isLoading = false;
-      }
-    });
+    // TODO[TRAINEE]: Implement fetchCourse
+    this.isLoading = false;
   }
 
   onEnrollClick(): void {

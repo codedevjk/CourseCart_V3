@@ -1,5 +1,13 @@
 package com.coursecart.commerce.service;
 
+import com.coursecart.commerce.exception.CommerceServiceException;
+import com.coursecart.commerce.exception.ErrorMessages;
+import org.springframework.http.HttpStatus;
+import com.coursecart.commerce.exception.CommerceServiceException;
+import com.coursecart.commerce.exception.ErrorMessages;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatus;
+
 import com.coursecart.commerce.client.CatalogServiceClient;
 import com.coursecart.commerce.client.EnrollmentServiceClient;
 import com.coursecart.commerce.dto.CheckoutRequest;
@@ -8,8 +16,6 @@ import com.coursecart.commerce.dto.CourseDTO;
 import com.coursecart.commerce.dto.EnrollmentCreateRequest;
 import com.coursecart.commerce.dto.OrderDTO;
 import com.coursecart.commerce.entity.Order;
-import com.coursecart.commerce.exception.BadRequestException;
-import com.coursecart.commerce.exception.ConflictException;
 import com.coursecart.commerce.repository.OrderRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,41 +52,12 @@ public class CommerceServiceImpl implements CommerceService {
     @Override
     @Transactional
     public CheckoutResponse processCheckout(CheckoutRequest request) {
-        CourseDTO course = catalogServiceClient.getCourseById(request.getCourseId());
-
-        if (!"ACTIVE".equals(course.getStatus())) {
-            throw new BadRequestException("Cannot purchase inactive course");
-        }
-
-        boolean isEnrolled = enrollmentServiceClient.checkEnrollment(request.getUserId(), request.getCourseId());
-        if (isEnrolled) {
-            throw new ConflictException("User is already enrolled in this course");
-        }
-
-        if (request.getPaymentMethod() == null || request.getPaymentMethod().trim().isEmpty()) {
-             throw new BadRequestException("Payment method is required");
-        }
-
-        Order order = new Order();
-        order.setUserId(request.getUserId());
-        order.setCourseId(request.getCourseId());
-        order.setAmountPaid(course.getPrice());
-        order.setPaymentMethod(request.getPaymentMethod());
-        
-        Order savedOrder = orderRepository.save(order);
-
-        EnrollmentCreateRequest enrollmentReq = new EnrollmentCreateRequest(request.getUserId(), request.getCourseId());
-        enrollmentServiceClient.createEnrollment(enrollmentReq);
-
-        return new CheckoutResponse(savedOrder.getId(), "SUCCESS", "Enrolled");
+        throw new UnsupportedOperationException("TODO[TRAINEE]: Implement processCheckout");
     }
 
     @Override
     public List<OrderDTO> getOrdersByUserId(Long userId) {
-        return orderRepository.findByUserIdOrderByOrderDateDesc(userId)
-                .stream()
-                .map(this::convertToDTO)
-                .collect(Collectors.toList());
+        throw new UnsupportedOperationException("TODO[TRAINEE]: Implement getOrdersByUserId");
     }
 
     @Override
