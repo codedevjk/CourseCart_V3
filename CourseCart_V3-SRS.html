@@ -886,7 +886,7 @@
 <span><strong>Primary Microservice:</strong> User Service</span>
 </div>
 <h4 class="sub2-title">Acceptance Criteria</h4><ul><li>As a logged-in user, I want to view my basic profile details, so that I can verify my account information.</li><li>The system shall display the user's name and username securely.</li><li>Profile data shall be retrieved securely using the logged-in user's identity.</li><li>The user interface must provide a clean and intuitive view representing the user's identity and details.</li></ul>
-<div class="trainee-note" style="margin-top: 15px; padding: 15px; background: #fffbeb; border-left: 4px solid #f59e0b; border-radius: 4px;"><h4 style="margin-bottom: 10px; color: #b45309; font-weight: 700; font-size: 14px;">Trainee Implementation &amp; Verification Guide</h4></div></div>
+</div>
 <!-- US04 -->
 <div class="us-card preimpl" id="us04">
 <h3>US 04 – Admin Category Management</h3>
@@ -904,7 +904,7 @@
 <span><strong>Primary Microservice:</strong> Catalog Service</span>
 </div>
 <h4 class="sub2-title">Acceptance Criteria</h4><ul><li>As an admin, I want to manage course metadata, so that I can define what is sold on the platform.</li><li>Administrators can view all courses regardless of their current publishing status.</li><li>Administrators can create and edit courses by providing a Title, Description, Price, and Category.</li><li>Every course must be assigned to exactly one existing category.</li><li>Administrators can set a fixed price for the course, including setting it to free.</li><li>Newly created courses shall default to a 'Draft' status.</li><li>The system must validate that the price is not negative and that all required fields are provided before saving.</li><li>Administrators can delete a course. Deleting a course must also securely remove all of its associated lessons.</li></ul>
-<div class="trainee-note" style="margin-top: 15px; padding: 15px; background: #fffbeb; border-left: 4px solid #f59e0b; border-radius: 4px;"><h4 style="margin-bottom: 10px; color: #b45309; font-weight: 700; font-size: 14px;">Trainee Implementation &amp; Verification Guide</h4></div></div>
+</div>
 <!-- US06 -->
 <div class="us-card preimpl" id="us06">
 <h3>US 06 – Admin Lesson Management</h3>
@@ -932,7 +932,7 @@
 <span><strong>Primary Microservice:</strong> Catalog Service</span>
 </div>
 <h4 class="sub2-title">Acceptance Criteria</h4><ul><li>As a user, I want to browse and search the active course catalog, so that I can find courses to learn.</li><li>The system shall display a visual grid or list containing only Active courses.</li><li>Users can filter the catalog by selecting a specific category.</li><li>Users can search for courses by entering part or all of a Course Title.</li><li>The catalog must support structured pagination to cleanly display a set number of courses per page.</li><li>Each course card shall display the Title, Price, and Category name clearly.</li><li>The interface must provide clear visual feedback during loading times and display helpful messages if no courses match the search criteria.</li></ul>
-<div class="trainee-note" style="margin-top: 15px; padding: 15px; background: #fffbeb; border-left: 4px solid #f59e0b; border-radius: 4px;"><h4 style="margin-bottom: 10px; color: #b45309; font-weight: 700; font-size: 14px;">Trainee Implementation &amp; Verification Guide</h4></div></div>
+</div>
 <!-- US09 -->
 <div class="us-card trainee-task" id="us09">
 <h3>US 09 – View Course Details <span class="badge-trainee">Trainee Task</span></h3>
@@ -941,7 +941,7 @@
 <span><strong>Primary Microservice:</strong> Catalog Service</span>
 </div>
 <h4 class="sub2-title">Acceptance Criteria</h4><ul><li>As a user, I want to view detailed information about a course, so that I can decide whether to purchase it.</li><li>The system shall display the course Title, Description, Category, and Price in a detailed view.</li><li>The system shall display a read-only list of the course syllabus (Lesson titles).</li><li>If the user is logged in and not yet enrolled, a clear option to purchase the course is displayed.</li><li>If the user is logged in and already enrolled, an option to directly navigate to the course material is displayed.</li><li>If the visitor is not logged in, they are prompted to log in or register before they can purchase the course.</li></ul>
-<div class="trainee-note" style="margin-top: 15px; padding: 15px; background: #fffbeb; border-left: 4px solid #f59e0b; border-radius: 4px;"><h4 style="margin-bottom: 10px; color: #b45309; font-weight: 700; font-size: 14px;">Trainee Implementation &amp; Verification Guide</h4></div></div>
+</div>
 <!-- US10 -->
 <div class="us-card trainee-task" id="us10">
 <h3>US 10 – Single Course Purchase (Mock Checkout) <span class="badge-trainee">Trainee Task</span>
@@ -951,7 +951,7 @@
 <span><strong>Primary Microservice:</strong> Commerce Service</span>
 </div>
 <h4 class="sub2-title">Acceptance Criteria</h4><ul><li>As a user, I want to purchase a course through a simulated checkout, so that I can gain access to its content.</li><li>Initiating a purchase directs the user to a streamlined mock checkout flow.</li><li>The system shall clearly display the course details and the total price to be paid.</li><li>The user can select a simulated payment method, and the system simulates a successful transaction.</li><li>The system must strictly prevent duplicate purchases if the user is already enrolled in the course.</li><li>Upon a successful transaction, the system records the order and officially enrolls the user in the course.</li><li>Failed transaction attempts must not grant course access or create order records.</li><li>The user is seamlessly redirected to a success screen or their learning dashboard upon completion.</li></ul>
-<div class="trainee-note" style="margin-top: 15px; padding: 15px; background: #fffbeb; border-left: 4px solid #f59e0b; border-radius: 4px;"><h4 style="margin-bottom: 10px; color: #b45309; font-weight: 700; font-size: 14px;">Trainee Implementation &amp; Verification Guide</h4></div></div>
+</div>
 <!-- US11 -->
 <div class="us-card trainee-task" id="us11">
 <h3>US 11 – View Order History <span class="badge-trainee">Trainee Task</span></h3>
@@ -960,7 +960,7 @@
 <span><strong>Primary Microservice:</strong> Commerce Service</span>
 </div>
 <h4 class="sub2-title">Acceptance Criteria</h4><ul><li>As a user, I want to view my past successful purchases, so that I have a record of my transactions.</li><li>The system shall display a clear, tabular list of the user's successfully completed orders.</li><li>The history must display the Course Title, Order Date, and Total Price Paid for each transaction.</li><li>Failed or incomplete purchase attempts must not appear in this history.</li><li>The order history must be sorted chronologically, showing the most recent transactions first.</li></ul>
-<div class="trainee-note" style="margin-top: 15px; padding: 15px; background: #fffbeb; border-left: 4px solid #f59e0b; border-radius: 4px;"><h4 style="margin-bottom: 10px; color: #b45309; font-weight: 700; font-size: 14px;">Trainee Implementation &amp; Verification Guide</h4></div></div>
+</div>
 <!-- US12 -->
 <div class="us-card trainee-task" id="us12">
 <h3>US 12 – My Learning Dashboard <span class="badge-trainee">Trainee Task</span></h3>
@@ -970,7 +970,7 @@
 </div>
 <h4 class="sub2-title">Acceptance Criteria</h4>
 <ul><li>As a user, I want to see a list of all courses I am enrolled in, so that I can resume learning.</li><li>The system shall display a personalized dashboard of all courses the user is enrolled in, including any courses that have since been retired by administrators.</li><li>The system shall automatically calculate and display the user's overall progress percentage for each course.</li><li>The dashboard must display a welcoming and helpful message if the user has not yet enrolled in any courses.</li></ul>
-<div class="trainee-note" style="margin-top: 15px; padding: 15px; background: #fffbeb; border-left: 4px solid #f59e0b; border-radius: 4px;"><h4 style="margin-bottom: 10px; color: #b45309; font-weight: 700; font-size: 14px;">Trainee Implementation &amp; Verification Guide</h4></div></div>
+</div>
 <!-- US13 -->
 <div class="us-card preimpl" id="us13">
 <h3>US 13 – Access Course Content</h3>
@@ -990,7 +990,7 @@
 </div>
 <h4 class="sub2-title">Acceptance Criteria</h4>
 <ul><li>As an enrolled user, I want to mark lessons as complete, so that my overall course progress is updated.</li><li>Users can manually toggle a lesson's status between Complete and Incomplete.</li><li>Toggling a lesson's status immediately and securely saves the user's progress.</li><li>The course's overall progress percentage is recalculated and updated dynamically on the screen in real-time.</li></ul>
-<div class="trainee-note" style="margin-top: 15px; padding: 15px; background: #fffbeb; border-left: 4px solid #f59e0b; border-radius: 4px;"><h4 style="margin-bottom: 10px; color: #b45309; font-weight: 700; font-size: 14px;">Trainee Implementation &amp; Verification Guide</h4></div></div>
+</div>
 <!-- US15 -->
 <div class="us-card preimpl" id="us15">
 <h3>US 15 – Admin Dashboard</h3>
@@ -1469,16 +1469,6 @@
 <li>The user journey flows horizontally: from Profile to Course Discovery, into Course Details, through Checkout, and finally tracking progress in the Learning Dashboard.</li>
 </ul>
 </div>
-</section><section id="sec-14">
-<h2 class="sec-title">14. Final Deliverables</h2>
-<ul>
-<li>Application archive with complete source code</li>
-<li>Database DDL/DML Scripts</li>
-<li>Running Microservices implementation</li>
-</ul>
-<p style="text-align:center; color: var(--primary); font-weight:700; margin-top:32px; font-size:1.05rem;">
-          Good Luck! Build clean, maintainable, and well-tested code.
-        </p>
 </section></main>
 </div>
 </body>
