@@ -50,6 +50,7 @@ public class EnrollmentServiceImpl implements EnrollmentService {
     @Transactional
     public void markLessonComplete(Long enrollmentId, Long lessonId, boolean completed) {
         throw new UnsupportedOperationException("TODO[TRAINEE]: Implement markLessonComplete");
+    }
 
     @Override
     public Map<String, Long> countTotalEnrollments() {
